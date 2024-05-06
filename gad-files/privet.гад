@@ -1,0 +1,9 @@
+(*
+  gad example 
+*)
+
+execute hello go  
+  declare voldemar aka string be "\ndummy\n"
+  show with voldemar
+done
+
