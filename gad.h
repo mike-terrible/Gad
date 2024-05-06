@@ -1,8 +1,11 @@
 //
 // gad.h !!!!!!!!!!!!!!!!!!!!!!!!!!!1
 //
+//
+#include <vector>
+using std::vector;
+//
 namespace Gad {
-
   typedef enum {
     ANY,
     COMMENT
@@ -17,7 +20,9 @@ namespace Gad {
     FILE* out;
     int ident;
     int gen;
+    bool ok;
     State st;
+    const char* atom;
     char* curVar;
     char* fname;
     char* xmain;
@@ -36,12 +41,17 @@ namespace Gad {
     void goParse(char* [],int);
     
     int cmp(const char*,const char*);
+    bool cmp(const char*,vector<const char*>);
     int cmp(const char*, const char* []);
-    
+
     void goVar(char*,char*,char*);
     char* getV(int,char* [],int);
     char* onType(char*);
     void setIdent(int);
+
+    MyRT* at(const char*);
+    MyRT* seek(vector<const char*>);
+    MyRT* seek(const char* []);
   };
 
 }

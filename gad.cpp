@@ -33,15 +33,17 @@ void gad(char* fn, char* opt) {
     printf("--> %s",li);
     if(rt -> st == ANY) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
-      const char* Comment[] = { "исполать","донос","(*", nullptr };
-      if(rt->cmp(t, Comment)) {
+      vector<const char*> Comment { "исполать","донос","(*" };
+      //if(rt->cmp(t, Comment)) {
+      rt->at(t)->seek(Comment); 
+      if(rt->ok) {
         rt -> st = COMMENT; continue;
       };
       rt->parseIt(t);
     }
     else if(rt -> st == COMMENT) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
-      const char* EndComment[] = { "зри","*)",nullptr };
+      vector<const char*> EndComment { "зри","*)" };
       if(rt->cmp(t, EndComment)) { rt -> st = ANY;  } 
       else {
         rt->to(rt->ident);
