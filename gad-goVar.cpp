@@ -29,7 +29,10 @@ void MyRT::goVar(char* var,char* vtype,char* val) {
       if((gen == MOJO) || (gen == PYTHON)) to(" = False\n");
       return;
     };
-    if(val[0]=='"') to(" = "),to(val),to("\"");
+    if(val[0]=='"') {
+      to(" = "),to(val),to("\"");
+      if(gen == RUST) to(".to_string()");
+    }
     else to(" = "),to(val); 
     if(gen == RUST) to(";\n"); else to("\n");
   };

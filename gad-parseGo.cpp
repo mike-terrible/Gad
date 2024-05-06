@@ -9,12 +9,31 @@
 using namespace Gad;
 
 void MyRT::goParse(char* p[],int nv) {
+  //
+  vector<const char*> With { "with","для" };
+  vector<const char*> Return { "result" , "exit", "ход"  };
+  vector<const char*> When { "when", "когда" };
+  vector<const char*> Repeat { "repeat","повтор" };
+  vector<const char*> Sic {"sic","lay","here","вот" };
+  vector<const char*> Else { "?-", "else", "иначе", "погасло" };
+  vector<const char*> Then { "?+","then","ли", "тогда" };
+  vector<const char*> If { "?!","if","если","горит" };
+  vector<const char*> Show { "show", "показать" };
+  vector<const char*> Skrepa { "mess","скрепа", "скрижаль", "грамота" };
+  vector<const char*> Give { "give", "дать" };
+  vector<const char*> Job { "job", "начать"};
+  vector<const char*> Amen { "amen", "done", "loop", "аминь", "весть" , "опять" };
+  vector<const char*> Delo { "proc","procedure", "десница","дело" };
+  vector<const char*> Declare { "dcl","declare","пусть"};
+  vector<const char*> Is { "is" , "суть" };
+  vector<const char*> Pora {"execute","start","пора" };
+  //
   int i = 0;
   while(i<nv) printf(" {%s}",p[i++]);
   printf("\n");
   i = 0;
   char* t = getV(i,p,nv); if(t == NULL) return;
-  if(cmp(t,"ход")) {
+  if(cmp(t,Return)) {
     i++; t = getV(i,p,nv);
     if(t==NULL) {
       to(ident),to("return");
@@ -25,12 +44,7 @@ void MyRT::goParse(char* p[],int nv) {
     to("\n");
     return;
   };
-  if(cmp(t,"опять")) {
-    to("\n"),setIdent(ident-2);
-    if((gen == GO) && (gen ==  RUST )) to(ident),to("}\n"); 
-    return;
-  };
-  if(cmp(t,"когда")) {
+  if(cmp(t,When)) {
     to(ident); 
     if(gen == GO) to("for");
     if((gen == RUST) || (gen == MOJO) || ( gen ==  PYTHON)) to("while"); 
@@ -38,7 +52,7 @@ void MyRT::goParse(char* p[],int nv) {
     for(;;) {
       i++; if(i>=nv) break;
       t = getV(i,p,nv); if(t == NULL) return;
-      if(cmp(t,"повтор")) {
+      if(cmp(t,Repeat)) {
         if((gen == GO) || (gen == RUST)) to(" {\n");
         if((gen == MOJO) || (gen == PYTHON)) to(" :\n");
         return;
@@ -48,7 +62,8 @@ void MyRT::goParse(char* p[],int nv) {
     };
     return;
   };
-  if(cmp(t,"вот")) {
+  
+  if(cmp(t,Sic)) {
     to(ident);
     for(;;) {
       i++; 
@@ -62,32 +77,28 @@ void MyRT::goParse(char* p[],int nv) {
     };
     return;
   };
-  if(cmp(t,"весть")) {
-    setIdent(ident-2);
-    if((gen == GO) || (gen == RUST)) to(ident),to("}\n");
-    if((gen == MOJO) || (gen == PYTHON)) to(ident),to("pass\n"); 
-    return;
-  };
-  if(cmp(t,"погасло")) {
+  if(cmp(t,Else)) {
     setIdent(ident-2);
     if((gen == GO) || (gen == RUST)) to(ident),to("} else {\n"); 
     if((gen == MOJO) || (gen == PYTHON)) to(ident),to("else:\n"); 
     setIdent(ident+2);
     return;
   };
-  if(cmp(t,"ли")) {
+  
+  if(cmp(t,Then)) {
     if((gen == GO) || (gen == RUST)) to(" {\n");
     if((gen ==  MOJO) || (gen == PYTHON)) to(" :\n"); 
     setIdent(ident+2);
     return;
   };
-  if(cmp(t,"горит")) {
+  
+  if(cmp(t,If)) {
     i++; t = getV(i,p,nv); if(t == NULL) return;
     to(ident);
     to("if "),to(t);
     while( i < nv ) {
       i++; t = getV(i,p,nv); if(t == NULL) return;
-      if(cmp(t,"ли")) {
+      if(cmp(t,Then)) {
         if((gen == RUST) || (gen == GO)) to(" {\n");
         if((gen == MOJO) || (gen == PYTHON)) to(" :\n"); 
         setIdent(ident+2);
@@ -97,7 +108,8 @@ void MyRT::goParse(char* p[],int nv) {
     };
     return;
   };
-  if(cmp(t,"дать")) {
+  
+  if(cmp(t,Give)) {
     i++;
     t = getV(i,p,nv); if(t==NULL) return;
     to(ident);
@@ -118,7 +130,7 @@ void MyRT::goParse(char* p[],int nv) {
     for(;;) {
       i++; if(i>=nv) break;
       t = getV(i,p,nv); if(t == NULL) break;
-      if(cmp(t,"для")) {
+      if(cmp(t,With)) {
         i++; t = getV(i,p,nv); if(t == NULL) break;
         np++;
         if(np>1) to(",");
@@ -128,7 +140,8 @@ void MyRT::goParse(char* p[],int nv) {
     if(gen == RUST) to(");\n"); else to(")\n"); 
     return;
   };
-  if(cmp(t,"начать")) {
+  
+  if(cmp(t,Job)) {
     i++;
     t = getV(i,p,nv);
     to("\n"),to(ident),to(t),to("(");
@@ -136,7 +149,7 @@ void MyRT::goParse(char* p[],int nv) {
     for(;;) {
       i++; if(i>=nv) break;
       t = getV(i,p,nv); if(t == NULL) break;
-      if(cmp(t,"для")) {
+      if(cmp(t,With)) {
         i++; t = getV(i,p,nv); if(t == NULL) break;
         np++;
         if(np>1) to(",");
@@ -147,29 +160,35 @@ void MyRT::goParse(char* p[],int nv) {
     else to(")\n");
     return;
   };
-  if(cmp(t,"показать")) {
+  
+  if(cmp(t,Show)) {
     int np = 0;
     while(++i < nv) {
       t = getV(i,p,nv); if(t == NULL) break;
-      if(cmp(t,"для")) {
+      if(cmp(t,With)) {
         i++;
         t = getV(i,p,nv); if(t == NULL) break;
         np++;
         if(gen == RUST) {
           to(ident),to("print!(\"{ } \",");
-          to(t); if(t[0]=='"') to("\""); 
-          to(");\n");
-        } else {
-          to(ident); to("print(");
-          to(t); if(t[0]=='"') to(t),to("\"");
-          if(gen == GO) to(")\n");
-          if((gen == PYTHON) && (gen == MOJO)) to(",end =\" \")\n");
-        };  
+          to(t); if(t[0]=='"') to("\""); to(");\n");
+          continue;
+        };
+        if(gen == GO) {
+          to(ident),to("print(");
+          to(t); if(t[0]=='"') to("\""); to(",\" \");\n");
+          continue;
+        };
+        if((gen == PYTHON)||(gen == MOJO)) {
+          to(ident),to("print(");
+          to(t); if(t[0]=='"') to("\"");
+          to(",end =\" \")\n");
+        }; 
       };
     };
     return;
   };
-  const char* Skrepa[] = { "скрепа", "скрижаль", "грамота",nullptr  };
+  
   if(cmp(t, Skrepa)) {
     i++;
     t = getV(i,p,nv); if(t == NULL) return;
@@ -179,7 +198,8 @@ void MyRT::goParse(char* p[],int nv) {
     if((gen == MOJO) || (gen == PYTHON)) to("print("),to(t),to("\")\n"); 
     return;
   };
-  if(cmp(t,"пора")) {
+  
+  if(cmp(t,Pora)) {
     i++; 
     xmain = getV(i,p,nv); if(xmain == NULL) return;
     i++;
@@ -209,14 +229,16 @@ void MyRT::goParse(char* p[],int nv) {
     };
     return;
   };
-  if(cmp(t,"аминь")) {
+  
+  if(cmp(t,Amen)) {
     to("\n");
     setIdent(ident-2),to(ident);
     if((gen == RUST) || (gen == GO)) to("}\n"); 
     if((gen == MOJO) || (gen == PYTHON)) to("pass\n"); 
     return;
   };
-  if(cmp(t,"пусть")) {
+  
+  if(cmp(t,Declare)) {
     i++; char* var = getV(i,p,nv); 
     i++; char* like = getV(i,p,nv); 
     i++; char* vtype = getV(i,p,nv);
@@ -224,15 +246,14 @@ void MyRT::goParse(char* p[],int nv) {
     i++; char* val = getV(i,p,nv);
     goVar(var,vtype,val); return;
   };
-  if(cmp(t,"суть")) {
+  
+  if(cmp(t,Is)) {
     if((gen == GO) || (gen == RUST)) to("{\n"); 
     setIdent(ident+2); 
     return;
   };
-  const char* Delo[] = { "десница","дело",nullptr };
   if(cmp(t,Delo)) {
     to(ident);
-    //char* hasResult = NULL;
     if(gen == GO) to("func "); if(gen == PYTHON) to("def "); 
     if((gen == MOJO) || (gen == RUST)) to("fn "); 
     i++;
