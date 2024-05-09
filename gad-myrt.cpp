@@ -5,8 +5,7 @@
 
 using namespace Gad;
 
-MyRT::MyRT(FILE* f) { fi = f;  
-  setIdent(0); 
+MyRT::MyRT(FILE* f) { fi = f; setIdent(0); inProc = false;
 }
 
 int MyRT::need(const char* fn) {
@@ -21,7 +20,6 @@ int MyRT::setGen(char* opt) {
     else if(cmp(opt,"-rust")) gen = RUST;
     else if(cmp(opt,"-python")) gen = PYTHON;
   };
-  printf("\nopt=[%s]\n",opt);
   switch(gen) {
   case MOJO: return need("./out.mojo"); 
   case PYTHON: return need("./out.py"); 

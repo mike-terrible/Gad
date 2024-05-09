@@ -19,7 +19,7 @@ void gad(char* fn, char* opt) {
   if(strstr(fname,".гад") == NULL) strcat(fname,".гад"); 
   f = fopen(fname,"r"); if(f == NULL) throw 1;
   rt = new MyRT(f);
-  rt->setGen(opt);
+  rt->setGen(opt); 
   switch(rt->gen) {
   case GO:
     rt->to("package main\n");
@@ -33,9 +33,9 @@ void gad(char* fn, char* opt) {
     printf("--> %s",li);
     if(rt -> st == ANY) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
-      vector<const char*> Comment { "исполать","донос","(*" };
+      //vector<const char*> Comment { "исполать","донос","(*" };
       //if(rt->cmp(t, Comment)) {
-      rt->at(t)->seek(Comment); 
+      rt->at(t)->seek(Gad::Comment); 
       if(rt->ok) {
         rt -> st = COMMENT; continue;
       };
@@ -43,8 +43,8 @@ void gad(char* fn, char* opt) {
     }
     else if(rt -> st == COMMENT) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
-      vector<const char*> EndComment { "зри","*)" };
-      if(rt->cmp(t, EndComment)) { rt -> st = ANY;  } 
+      //vector<const char*> EndComment { "зри","*)" };
+      if(rt->cmp(t, Gad::EndComment)) { rt -> st = ANY;  } 
       else {
         rt->to(rt->ident);
         if((rt->gen == GO) || (rt->gen == RUST)) rt->to("//",li);

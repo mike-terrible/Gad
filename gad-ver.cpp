@@ -5,4 +5,4 @@
 
 using namespace Gad;
 
-const char* MyRT::ver = "gad , версия 1.1";
+const char* MyRT::ver = "gad , версия 1.3";
