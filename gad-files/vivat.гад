@@ -1,0 +1,39 @@
+(*
+  пример программы на языке гад
+*)
+
+declare Voldemar as string = "дурак"
+
+proc eating with pipi as int is 
+  mess pipi
+  mess "eating"
+amen
+
+proc drinking with vassa as int with fire as light result string 
+  declare vova as string be "к торжественному маршу"
+  show with vova with "\n" 
+  show with vassa with " год дали васе\n"
+  if fire then
+    mess "давайте вместе подуем на свечу"
+    result "пожар"
+  else
+    mess "свеча горела на столе свеча горела"
+    result "потухло"
+  done
+amen
+
+exec hell run
+  mess "бог в помощь!"
+  declare pedro as int = 1
+  declare autodafe as light be on
+  @@ eating with pedro
+  !!! joan as drinking with 16 with autodafe
+  mess joan
+  declare it as int = 1
+  when it < 10 repeat
+    show with it with "\n"
+    sic it = it + 1
+  loop
+  mess "Конец Работы"
+  mess Voldemar 
+amen

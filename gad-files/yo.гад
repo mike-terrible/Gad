@@ -1,0 +1,13 @@
+(*
+  english gad
+*)
+
+??? wakeUp !!!
+  dcl john : string = "dummy"
+  if john == "dummy" then
+    mess "john is an idiot"
+  else
+    mess "john is smarty"
+  amen
+  mess "completed"
+amen

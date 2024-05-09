@@ -4,6 +4,9 @@
 
 execute hello go  
   declare voldemar aka string be "\ndummy\n"
+  dcl pipi : real = 3.1412
+  dcl nl : string = "\n"
   show with voldemar
+  show with nl with pipi with nl
 done
 
