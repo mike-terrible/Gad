@@ -5,7 +5,7 @@
 
 namespace Gad { 
   const char* Declare[] = { "dcl","declare","пусть","да", "хай" , "ну" , nullptr };
-  const char* Aka[] = { ":","as","aka","как", "таке", "це" , nullptr };
+  const char* Aka[] = { ":","as","aka","как","пока","таке", "це" , nullptr };
   
   const char* If[] = { "?!","if","если","горит", "чи", nullptr };
   const char* Then[] = { "?+","then","ли", "тогда", "є" , nullptr };
