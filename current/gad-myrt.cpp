@@ -34,7 +34,11 @@ void MyRT::setIdent(int ii) {
 }
 
 char* MyRT::getV(int idx,char* p[],int nv) {
-  if(idx>=nv)  return NULL;
+  //if(idx>=nv)  return NULL;
+  if(idx >= nv) {
+    printf("\n nv = %d,idx = %d\n",nv,idx);
+    throw 665;
+  };
   return p[idx];
 }
 

@@ -7,13 +7,14 @@ using namespace Gad;
 
 int MyRT::goReturn(MyRT* rt,char* p[],int nv) {
   int i = 0;
-  i++; char* t = rt->getV(i,p,nv);
-  if(t==NULL) {
+  i++; 
+  if(i == nv) {
     rt->to(rt->ident),rt->to("return");
     if(rt->gen == RUST) rt->to(";");;
     rt->to("\n");
     return 0;
   };
+  char* t = rt->getV(i,p,nv);
   rt->to(rt->ident),rt->to("return "),rt->to(t);
   if(t[0]=='\"') {
     rt->to("\"");

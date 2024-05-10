@@ -5,8 +5,7 @@
 
 using namespace Gad;
 
-int MyRT::goIs(MyRT* rt,char* p[],int nv) { return rt->goIs(p,nv); }
-int MyRT::goIs(char* p[],int nv) {
-  if((gen == GO) || (gen == RUST)) to("{\n"); 
-  setIdent(ident+2); return 0;
+int MyRT::goIs(MyRT* rt,char* p[],int nv) { 
+  if((rt->gen == GO) || (rt->gen == RUST)) rt->to("{\n"); 
+  rt->setIdent(rt->ident+2); return 0;
 }

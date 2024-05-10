@@ -5,38 +5,30 @@
 
 using namespace Gad;
 
-int MyRT::goPora(MyRT* rt,char* p[],int nv) { return rt->goPora(p,nv); }
-int MyRT::goPora(char* p[],int nv) {
-  inProc = true;
+int MyRT::goPora(MyRT* rt,char* p[],int nv) { 
+  rt -> inProc = true;
   int i = 0;
   char* t = p[i]; 
-  i++; xmain = getV(i,p,nv); if(xmain == NULL) return 0;
-  i++; t = getV(i,p,nv); 
-  if(t == NULL) { to(ident);
-    if(gen == RUST) to("unsafe fn "),to(xmain),to("() {\n"); 
-    if(gen == GO) to("func "),to(xmain),to("() {\n"); 
-    if(gen == MOJO) to("fn "),to(xmain),to("() raises :\n"); 
-    if(gen == PYTHON) to("def "),to(xmain),to("() :\n"); 
-    setIdent(ident+2);
-  } 
-  else { to(ident);
-    if(gen == RUST) to("fn main() {\n"); 
-    if(gen == GO) to("func main() {\n"); 
-    if(gen == MOJO) to("fn main() :\n"); 
-    if(gen == PYTHON) to("def main() :\n"); 
-    setIdent(ident+2),to(ident);
-    if(gen == RUST) to("unsafe { ");
-    to(xmain),to("()");
-    if(gen == RUST) to("; }");
-    to("\n");
-    setIdent(ident-2),to(ident);
-    if((gen == GO)||(gen == RUST)) to("}\n"); 
-    to(ident);
-    if(gen == RUST) to("unsafe fn "),to(xmain),to("() {\n"); 
-    if(gen == GO) to("func "),to(xmain),to("() {\n"); 
-    if(gen == MOJO) to("fn "),to(xmain),to("() :\n"); 
-    if(gen == PYTHON) to("def "),to(xmain),to("() :\n"); 
-    setIdent(ident+2);
+  i++; rt->xmain = rt->getV(i,p,nv); 
+  i++; t = rt->getV(i,p,nv); 
+  { rt->to(rt->ident);
+    if(rt->gen == RUST) rt->to("fn main() {\n"); 
+    if(rt->gen == GO) rt->to("func main() {\n"); 
+    if(rt->gen == MOJO) rt->to("fn main() :\n"); 
+    if(rt->gen == PYTHON) rt->to("def main() :\n"); 
+    rt->setIdent(rt->ident+2),rt->to(rt->ident);
+    if(rt->gen == RUST) rt->to("unsafe { ");
+    rt->to(rt->xmain),rt->to("()");
+    if(rt->gen == RUST) rt->to("; }");
+    rt->to("\n");
+    rt->setIdent(rt->ident-2),rt->to(rt->ident);
+    if((rt->gen == GO)||(rt->gen == RUST)) rt->to("}\n"); 
+    rt->to(rt->ident);
+    if(rt->gen == RUST) rt->to("unsafe fn "),rt->to(rt->xmain),rt->to("() {\n"); 
+    if(rt->gen == GO) rt->to("func "),rt->to(rt->xmain),rt->to("() {\n"); 
+    if(rt->gen == MOJO) rt->to("fn "),rt->to(rt->xmain),rt->to("() :\n"); 
+    if(rt->gen == PYTHON) rt->to("def "),rt->to(rt->xmain),rt->to("() :\n"); 
+    rt->setIdent(rt->ident+2);
   };
   return 0;
 }

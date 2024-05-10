@@ -5,14 +5,13 @@
 
 using namespace Gad;
 
-int MyRT::goDeclare(MyRT* rt,char* p[],int nv) { return rt->goDeclare(p,nv); }
-int MyRT::goDeclare(char* p[],int nv) {
+int MyRT::goDeclare(MyRT* rt,char* p[],int nv) { 
   int i = 0;
-  i++; char* var = getV(i,p,nv); 
-  i++; char* like = getV(i,p,nv); 
-  i++; char* vtype = getV(i,p,nv);
-  i++; char* be = getV(i,p,nv);
-  i++; char* val = getV(i,p,nv);
-  goVar(var,vtype,val);
+  i++; char* var = rt->getV(i,p,nv); 
+  i++; char* like = rt->getV(i,p,nv); 
+  i++; char* vtype = rt->getV(i,p,nv);
+  i++; char* be = rt->getV(i,p,nv);
+  i++; char* val = rt->getV(i,p,nv);
+  rt->goVar(var,vtype,val);
   return 0;
 }

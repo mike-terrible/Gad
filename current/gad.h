@@ -84,44 +84,30 @@ namespace Gad {
     static int goReturn(MyRT*,char* [],int);
     
     static int goWhen(MyRT*, char* [],int);
-    int goWhen(char* [],int);
     
     static int goSic(MyRT*, char* [],int);
-    int goSic(char* [],int);
     
     static int goElse(MyRT*, char* [],int);
-    int goElse(char* [],int);
     
     static int goThen(MyRT*, char* [],int);
     static int goIf(MyRT*, char* [],int);
     static int goGive(MyRT*,char* [],int);
     
     static int goJob(MyRT*,char* [],int);
-    int goJob(char* [],int);
     
     static int goShow(MyRT*, char* [],int);
-    int goShow(char* [],int);
-    
     static int goSkrepa(MyRT*, char* [],int);
-    int goSkrepa(char* [],int);
     
     static int goDeclare(MyRT*, char* [],int);
-    int goDeclare(char* [],int);
     
     static int goDone(MyRT*,char* [],int);
     static int goLoop(MyRT*,char* [],int);
+    
     static int goAmen(MyRT*,char* [],int);
-    int goAmen(char* [],int);
 
-
-    static int goIs(MyRT*,char* [],int);
-    int goIs(char* [],int);
-    
+    static int goIs(MyRT*,char* [],int);    
     static int goDelo(MyRT*,char* [],int);
-    int goDelo(char* [],int);
-    
     static int goPora(MyRT*,char* [],int);
-    int goPora(char* [],int);
 
     char* getV(int,char* [],int);
     char* onType(char*);

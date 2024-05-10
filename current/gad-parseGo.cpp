@@ -14,6 +14,7 @@ int MyRT::goParse(char* p[],int nv) {
   int i = 0;
   while(i<nv) printf(" {%s}",p[i++]);
   printf("\n");
+  if(nv==0) return 0;
   i = 0;
   char* t = getV(i,p,nv); if(t == NULL) return 0; 
   static Gad::It ai[]  =  { 
@@ -39,7 +40,12 @@ int MyRT::goParse(char* p[],int nv) {
   int j = 0;
   while(ai[j].verb != nullptr) {
     ai[j].mrt = this; 
-    if(cmp(t,ai[j].verb)) return ai[j].go(this,p,nv);
+    if(cmp(t,ai[j].verb)) try {
+      ai[j].go(this,p,nv);
+      return 0;
+    } catch(int brk) {
+      return brk;
+    };
     j++;
   };
   return 0;
