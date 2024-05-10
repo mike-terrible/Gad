@@ -33,8 +33,6 @@ void gad(char* fn, char* opt) {
     printf("--> %s",li);
     if(rt -> st == ANY) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
-      //vector<const char*> Comment { "исполать","донос","(*" };
-      //if(rt->cmp(t, Comment)) {
       rt->at(t)->seek(Gad::Comment); 
       if(rt->ok) {
         rt -> st = COMMENT; continue;
@@ -43,7 +41,6 @@ void gad(char* fn, char* opt) {
     }
     else if(rt -> st == COMMENT) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
-      //vector<const char*> EndComment { "зри","*)" };
       if(rt->cmp(t, Gad::EndComment)) { rt -> st = ANY;  } 
       else {
         rt->to(rt->ident);
