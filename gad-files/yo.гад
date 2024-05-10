@@ -8,6 +8,6 @@
     mess "john is an idiot"
   else
     mess "john is smarty"
-  amen
+  done
   mess "completed"
 amen
