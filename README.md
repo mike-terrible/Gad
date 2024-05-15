@@ -38,5 +38,6 @@
 `  скрижаль "Конец Работы"`     
 `аминь`    
 исходники находятся в папке current.  
-[Реализация компилятора на языке rust](https://github.com/mike-terrible/Gad/tree/main/gad-rust) 
+[Реализация компилятора на языке rust](https://github.com/mike-terrible/Gad/tree/main/gad-rust)    
+
 Есть даже кое-какая документаця по языку программирования Гад.  [руководство по программировнию на языке Гад](https://github.com/mike-terrible/Gad/wiki)  
