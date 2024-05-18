@@ -5,6 +5,13 @@
 
 using namespace Gad;
 
+int MyRT::goInit(MyRT* rt,char* [],int nv) {
+  rt->to(rt->ident);
+  rt->inArray = false;
+  return 0;
+}
+
+
 int MyRT::goDone(MyRT* rt,char* p[],int nv) {
   return goLoop(rt,p,nv);
 }

@@ -25,6 +25,8 @@ namespace Gad {
   extern const char* Real[]; 
   extern const char* Light[]; 
   // commands
+  extern const char* Init[];
+  extern const char* Array[];
   extern const char* Comment[]; 
   extern const char* EndComment[]; 
   extern const char* On[];
@@ -54,12 +56,16 @@ namespace Gad {
     static const char* ver;  
     FILE *fi,*out;
     int ident;
+    //
+    bool inArray;
+    int inInit;
+    char curVar[256];
+    //
     int inProc;
     CodeGen gen;
     bool ok;
     State st;
     const char* atom;
-    char* curVar;
     char* fname;
     char* xmain;
     MyRT(FILE*);
@@ -80,6 +86,10 @@ namespace Gad {
     int cmp(const char*, const char* []);
 
     void goVar(char*,char*,char*);
+    
+    void goArray(char* [], int,  char* ,  char*,  char*,  char*  );
+    static int goWith(MyRT*,char* [],int);
+    static int goInit(MyRT*, char* [],int);
 
     static int goReturn(MyRT*,char* [],int);
     
@@ -110,6 +120,7 @@ namespace Gad {
     static int goPora(MyRT*,char* [],int);
 
     char* getV(int,char* [],int);
+    char* onValue(char*);
     char* onType(char*);
     void setIdent(int);
 

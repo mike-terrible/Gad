@@ -29,12 +29,14 @@ int MyRT::goParse(char* p[],int nv) {
     It(nullptr,Give,MyRT::goGive), 
     It(nullptr,Job,MyRT::goJob),
     It(nullptr,Show,MyRT::goShow), 
-    It(nullptr,Skrepa,MyRT::goSkrepa), 
-    It(nullptr,Pora,MyRT::goPora),
+    It(nullptr,Skrepa,MyRT::goSkrepa),  
+    It(nullptr,Pora,MyRT::goPora), 
     It(nullptr,Amen,MyRT::goAmen), 
-    It(nullptr,Declare,MyRT::goDeclare), 
+    It(nullptr,Declare,MyRT::goDeclare), //
     It(nullptr,Is,MyRT::goIs), 
     It(nullptr,Delo,MyRT::goDelo),
+    It(nullptr,Init,MyRT::goInit),
+    It(nullptr,With,MyRT::goWith),
     It(nullptr,nullptr,nullptr)
   };
   int j = 0;

@@ -7,6 +7,23 @@
 
 using namespace Gad;
 
+char* MyRT::onValue(char* xtype) {
+  static char vv[128];
+  if(cmp(xtype,Str)) {
+    strcpy(vv,"\"\""); return vv;
+  };
+  if(cmp(xtype,Num)) {
+    strcpy(vv,"0"); return vv;
+  };
+  if(cmp(xtype,Real)) {
+    strcpy(vv,"0.0"); return vv;
+  };
+  if(cmp(xtype,Light)) {
+    strcpy(vv,"false"); return vv;
+  };  
+  vv[0]=0;
+  return vv;
+}
 
 char* MyRT::onType(char* xtype) {
   static char zv[128];

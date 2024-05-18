@@ -8,9 +8,9 @@
 
 using namespace Gad;
 
-It::It(MyRT* ru,const char* v[],Fn fn){
+It::It(MyRT* r,const char* v[],Fn fn){
   go = fn;
   verb = v;
-  mrt = ru;
+  mrt = r;
 }
 

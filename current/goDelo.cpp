@@ -23,8 +23,12 @@ int MyRT::goDelo(MyRT* rt,char* p[],int nv) {
         if(rt->gen == PYTHON) { rt->to(") :\n"); rt->setIdent(rt->ident + 2); return 0; };
         int nz = strlen(ztype);
         if(nz > 0) {
-          if(rt->gen == GO) { rt->to(") "),rt->to(ztype),rt->to(" {\n"); rt->setIdent(rt->ident + 2); return 0; };
-          if(rt->gen == MOJO) { rt->to(") -> "),rt->to(ztype),rt->to(" :\n"); rt->setIdent(rt->ident + 2); return 0; };
+          if(rt->gen == GO) { 
+            rt->to(") "),rt->to(ztype),rt->to(" {\n"); rt->setIdent(rt->ident + 2); return 0; 
+          };
+          if(rt->gen == MOJO) { rt->to(") -> "),rt->to(ztype),rt->to(" :\n"); 
+            rt->setIdent(rt->ident + 2); return 0; 
+          };
           if(rt->gen == RUST) { rt->to(") -> ");
             if(rt->cmp(ztype,"&str")) rt->to("String");
             else rt->to(ztype);
