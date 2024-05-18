@@ -12,6 +12,9 @@ var Mode string = "-go";
 var Out *bufio.Writer;
 var Ident int = 0;
 var InProc = false;
+var InArray = false;
+var InInit int = 0;
+var CurVar string = "";
 
 func Parser(fn string, mode string) {
   var dname = fn;
@@ -72,9 +75,12 @@ func Parser(fn string, mode string) {
     if Cmp(s,RUN) { GenRun(nv, pt); continue; }
     if Cmp(s,AMEN) { GenAmen(); continue; }
     if Cmp(s,DECLARE) { GenDeclare(nv, pt); continue; }
+    if Cmp(s,WITH) { GenWith(nv , pt); continue; }
     if Cmp(s,IS) { GenIs(nv, pt); continue; }
-    if Cmp(s,PROC) { GenProc(nv , pt); continue; };
-  }
+    if Cmp(s,PROC) { GenProc(nv , pt); continue; }
+    if Cmp(s,INIT) { GenInit(); continue; }
+  };
+  if Mode == "-python" { Wr("main()\n"); };
   rf.Close()
   Out.Flush()
   out.Close()

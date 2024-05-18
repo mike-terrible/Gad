@@ -1,6 +1,8 @@
 package main
 
 //
+var ARRAY = []string { "array" , "ларь", "кошик" }; 
+var INIT = []string { "init", "так"  };
 var WITH = []string { "with","для", "по", "ще" };
 var BEGIN_COMMENT = []string { "(*","донос","исполать" };
 var END_COMMENT = []string { "*)", "зри" };

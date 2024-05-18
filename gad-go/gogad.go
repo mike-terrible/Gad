@@ -6,8 +6,9 @@ package main
 import "os"
 import "fmt"
 
+
 func main() {
-  fmt.Println("gad compiler rel 2.01");
+  fmt.Println("gad compiler ", Ver);
   var z = os.Args;
   var n = len(z)
   var fn = ""
