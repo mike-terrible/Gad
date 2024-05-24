@@ -9,10 +9,16 @@
 using namespace Gad;
 
 
-int MyRT::goParse(char* p[],int nv) {
-
+int MyRT::goParse(char* pp[],int nv) {
+  char* p[256];
   int i = 0;
-  while(i<nv) printf(" {%s}",p[i++]);
+  while(i<nv) {
+    char* tv = pp[i];
+    char* v = aliasV(tv);
+    if(v != nullptr) p[i] = v; else p[i] = tv; 
+    printf(" {%s}",p[i]);
+    i++;
+  };  
   printf("\n");
   if(nv==0) return 0;
   i = 0;
@@ -29,14 +35,15 @@ int MyRT::goParse(char* p[],int nv) {
     It(nullptr,Give,MyRT::goGive), 
     It(nullptr,Job,MyRT::goJob),
     It(nullptr,Show,MyRT::goShow), 
-    It(nullptr,Skrepa,MyRT::goSkrepa),  
-    It(nullptr,Pora,MyRT::goPora), 
+    It(nullptr,Mess,MyRT::goMess),  
+    It(nullptr,Run,MyRT::goRun), 
     It(nullptr,Amen,MyRT::goAmen), 
     It(nullptr,Declare,MyRT::goDeclare), //
     It(nullptr,Is,MyRT::goIs), 
-    It(nullptr,Delo,MyRT::goDelo),
+    It(nullptr,Proc,MyRT::goProc),
     It(nullptr,Init,MyRT::goInit),
     It(nullptr,With,MyRT::goWith),
+    It(nullptr,Alias,MyRT::goAlias),
     It(nullptr,nullptr,nullptr)
   };
   int j = 0;
@@ -50,6 +57,7 @@ int MyRT::goParse(char* p[],int nv) {
     };
     j++;
   };
+  gadError(t,p,nv);
   return 0;
 }
 

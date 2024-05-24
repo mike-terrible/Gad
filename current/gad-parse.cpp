@@ -36,7 +36,7 @@ void MyRT::parseIt(char* t) {
   };
   if(j>0) {
     lex[j]=0;
-    aa[k++] = strdup(lex); j=0;
+    aa[k++] = strdup(lex); j=0;  
   }; 
   goParse(aa,k);
   i = 0;

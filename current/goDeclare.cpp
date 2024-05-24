@@ -20,8 +20,8 @@ int MyRT::goDeclare(MyRT* rt,char* p[],int nv) {
     return 0;
   }; 
   i++; vtype = rt->getV(i,p,nv);
-  i++; be = rt->getV(i,p,nv);
-  i++; val = rt->getV(i,p,nv);
+  i++; if(i<nv) be = p[i];
+  i++; if(i<nv) val = p[i];
   rt->goVar(var,vtype,val);
   return 0;
 }

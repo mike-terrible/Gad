@@ -38,88 +38,96 @@ int MyRT::goWith(MyRT *rt,char* p[],int nv) {
   return 0;
 }
 
-void MyRT::goArray(char* p[],int nv, char* var, char* vsize, char* vtype, char* be ) {
-  if(var == NULL) throw 2; to(ident);
-  if(gen == GO) {
+void MyRT::goArray(char* p[],int nv, char* varV, char* vsize, char* vtype, char* be ) {
+  if(varV == NULL) return;  to(ident);
+  switch(gen) {
+  case GO: {
     to("var ");
-    to(var),to(" ");
+    to(varV); to(" ");
     to("["); 
-    if( vsize[0] != '?' ) to(vsize);
+    if(strcmp(vsize,"?")!=0) to(vsize);
     to("]");
     to(onType(vtype));
     if(be == NULL) { inArray = false; to(";\n"); return; };
-    strcpy(curVar,var);
+    strcpy(curVar,varV);
     to("\n");
     inArray = true; 
-    if(cmp(be,Aka)) {
-      inInit = 0;
-    } else { 
+    if(cmp(be,Aka)) { inInit = 0; }
+    else { 
       inInit = 1;
       to(ident);
-      to(var);
+      to(varV);
       to("[0] = "); 
-      to(be); if(be[0]=='\"') to("\"");
+      to(be); if(be[0] == '\"') to("\""); 
       to("\n");
     }; 
     return;
-  };
-  if(gen == RUST) {
-    if(inProc) to("let mut "),to(var);
-    else to("static mut "),to(var);
+  }
+  case RUST: {
+    if(inProc) { to("let mut "); to(varV); } else {  
+      to("static mut "); to(varV);  
+    };
     to(": ");
     to("[");
     to(onType(vtype));
     to(";");
-    if( vsize[0] != '?') to(vsize);
+    if(strcmp(vsize,"?")!=0) to(vsize); 
     to("]");
-    to(" = ["); to(onValue(vtype)); to(";"); to(vsize); to("];\n");
+    to(" = ["); to(onValue(vtype)); to(";"); to(vsize); 
+    to("];\n");
     if(be == NULL) { inArray = false; return; };
-    strcpy(curVar,var);
+    strcpy(curVar,varV);
     inArray = true;  
     if(cmp(be,Aka)) {
       inInit = 0;
     } else {
       inInit = 1;
       to(ident);
-      to(var);
+      to(varV);
       to("[0] = "); 
-      to(be); if(be[0]=='\"') to("\"");
+      to(be); if (be[0] == '\"') to("\""); 
       to(";");
     };
     to("\n");
     return;
-  };
-  if(gen == PYTHON) {
-    to(var);
+  }
+  case PYTHON: {
+    to(varV);
     to(" = [ ]\n");
     if(be == NULL) { inArray = false; to("\n"); return; };
+    strcpy(curVar,varV);
     inArray = true; 
-    strcpy(curVar,var);
-    to(ident);
-    to(curVar);
-    to(".append("); 
-    to(be); if(be[0]=='\"') to("\"");  
-    to(")\n");
+    if(cmp(be,Aka)) { inInit = 0; } else {
+      inInit = 1;
+      to(ident);
+      to(curVar);
+      to(".append("); 
+      to(be); if(be[0] == '\"') { to("\""); };
+    };    
+    to("\n");
     return;
-  };
-  if(gen == MOJO) {
+  }
+  case MOJO: {
     to("var ");
-    to(var);
+    to(varV);
     to(" = List[");
     to(onType(vtype));
     to("]()");
-    if(be == NULL) { inArray = false; to("\n"); return; };
-    to("\n");
+    strcpy(curVar, varV);
     inArray = true; 
-    strcpy(curVar,var);
-    to(ident);
-    to(curVar);
-    to(".append("); 
-    to(be); if(be[0]=='\"') to("\""); 
-    to(")\n");
+    if(be == NULL) { inArray = false; to("\n"); return; };
+    if(cmp(be,Aka)) { inInit = 0; } else {
+      inInit = 1;
+      to(ident);
+      to(curVar);
+      to(".append("); 
+      to(be); if(be[0] =='\"') { to("\""); };
+    }; 
+    to("\n");
     return;
-  };
-  
+   }
+   default: break; 
+   }; // switch
 }
 
 void MyRT::goVar(char* var, char* vtype, char* val) {
@@ -153,6 +161,12 @@ void MyRT::goVar(char* var, char* vtype, char* val) {
       to("\"");
     };
     if(gen == RUST) to(";\n"); else to("\n");
+  } else {
+    switch(gen) {
+    case RUST: to(";\n"); break;
+    case GO: to("\n"); break;
+    default: break;
+    };  
   };
 }
 

@@ -1,3 +1,5 @@
+// inout.cpp
+//
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,4 +7,9 @@
 
 using namespace Gad;
 
-const char* MyRT::ver = "gad , версия 1.5.1";
+namespace Gad {
+
+ char infn[255];
+ char outfn[255];
+
+}

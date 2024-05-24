@@ -5,7 +5,11 @@
 
 using namespace Gad;
 
-MyRT::MyRT(FILE* f) { fi = f; setIdent(0); inProc = false;
+
+MyRT::MyRT(FILE* f,char* fn) { fi = f; setIdent(0); inProc = false;
+  //inFname = infn;
+  //outFname = outfn;
+  strcpy(infn,fn);
 }
 
 int MyRT::need(const char* fn) {
@@ -20,11 +24,26 @@ int MyRT::setGen(char* opt) {
     else if(cmp(opt,"-rust")) gen = RUST;
     else if(cmp(opt,"-python")) gen = PYTHON;
   };
+  strcpy(outfn,infn);
+  char* p = strstr(outfn,".гад");
   switch(gen) {
-  case MOJO: return need("./out.mojo"); 
-  case PYTHON: return need("./out.py"); 
-  case RUST: return need("./out.rs"); 
-  case GO: default: return need("./out.go");
+  case MOJO: {
+    strcpy(p,",mojo");
+    return need(outfn); 
+  }
+  case PYTHON: {
+    strcpy(p,".py");
+    return need(outfn);
+  }
+  case RUST: {
+    strcpy(p,".rs");
+    return need(outfn);
+  } 
+  case GO: {
+    strcpy(p,".go");
+    return need(outfn);
+  }
+  default: return need("./out.go");
   }; 
   
 }

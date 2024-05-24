@@ -16,9 +16,12 @@ void gad(char* fn, char* opt) {
   fname[0]=0;
   if(strstr(fn,"./") == NULL) strcpy(fname,"./");
   strcat(fname,fn);
-  if(strstr(fname,".гад") == NULL) strcat(fname,".гад"); 
+  if(strstr(fname,".гад") == NULL) {
+    strcat(fname,".гад"); 
+  } else {
+  };  
   f = fopen(fname,"r"); if(f == NULL) throw 1;
-  rt = new MyRT(f);
+  rt = new MyRT(f,fname);
   rt->setGen(opt); 
   switch(rt->gen) {
   case GO:
