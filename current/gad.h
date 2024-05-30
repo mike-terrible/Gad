@@ -89,6 +89,7 @@ namespace Gad {
     MyRT(FILE*,char*);
 
     void onDebug(char*);
+    void onDebug(const char*);
 
     int need(const char*);
     int setGen(char*);
