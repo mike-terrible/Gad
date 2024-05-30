@@ -1,0 +1,12 @@
+(*
+  english gad
+*)
+
+??? wakeUp !!!
+  dcl john : string = "dummy"
+  evil john "dummy" == then
+    mess "John is dummy!"
+  else
+    mess "John is cute!" 
+  done 
+amen
