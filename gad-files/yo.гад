@@ -3,11 +3,10 @@
 *)
 
 ??? wakeUp !!!
-  dcl john : string = "dummy"
-  if john == "dummy" then
-    mess "john is an idiot"
-  else
-    mess "john is smarty"
-  done
+  dcl i as num = 0
+  evil i 5 lt repeat
+    give i evil i ++
+    mess i
+  loop
   mess "completed"
 amen
