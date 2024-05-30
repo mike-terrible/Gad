@@ -23,6 +23,20 @@ int MyRT::cmp(const char* a,const char* b[] ) {
   return 0;
 }
 
+/*
+int MyRT::cmpAll(char* p[], const char* b[]) {
+  int i = 0,j = 0;
+  char xbuf[128];
+  while(p[i] != nullptr) {
+    strcpy(xbuf,p[i]);
+    if(cmp(xbuf,b)) { inLine = i; return 1; };
+    i++;
+  };
+  inLine = -1;
+  return 0;
+}
+*/
+
 
 int MyRT::cmp(const char* a, const char* b) {
   int n = strlen(b);

@@ -44,6 +44,7 @@ int MyRT::goParse(char* pp[],int nv) {
     It(nullptr,Init,MyRT::goInit),
     It(nullptr,With,MyRT::goWith),
     It(nullptr,Alias,MyRT::goAlias),
+    It(nullptr,Eval,MyRT::goEval),
     It(nullptr,nullptr,nullptr)
   };
   int j = 0;

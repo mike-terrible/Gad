@@ -79,6 +79,7 @@ namespace Gad {
     char curVar[256];
     //
     int inProc;
+    int inLine;
     CodeGen gen;
     bool ok;
     State st;
@@ -103,6 +104,7 @@ namespace Gad {
     
     int cmp(const char*,const char*);
     int cmp(const char*, const char* []);
+    int cmpAll(char* [], const char* []);
 
     void goVar(char*,char*,char*);
     
@@ -116,6 +118,8 @@ namespace Gad {
 
     static int goReturn(MyRT*,char* [],int);
     
+    
+    static int goEval(MyRT*, char* [],int);
     static int goWhen(MyRT*, char* [],int);
     
     static int goSic(MyRT*, char* [],int);

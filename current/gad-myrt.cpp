@@ -14,6 +14,15 @@ MyRT::MyRT(FILE* f,char* fn) { fi = f; setIdent(0); inProc = false;
 
 int MyRT::need(const char* fn) {
   out = fopen(fn,"w"),printf("\n создаём %s\n",fn);
+  const char* about = "";
+  switch(gen) {
+  case GO: about = "GO"; break;
+  case MOJO: about = "MOJO"; break;
+  case RUST: about = "RUST"; break;
+  case PYTHON: about = "PYTHON"; break;
+  default: break;
+  };
+  printf("\n codegen %s\n",about);
   return 0;
 }
 
@@ -27,22 +36,10 @@ int MyRT::setGen(char* opt) {
   strcpy(outfn,infn);
   char* p = strstr(outfn,".гад");
   switch(gen) {
-  case MOJO: {
-    strcpy(p,",mojo");
-    return need(outfn); 
-  }
-  case PYTHON: {
-    strcpy(p,".py");
-    return need(outfn);
-  }
-  case RUST: {
-    strcpy(p,".rs");
-    return need(outfn);
-  } 
-  case GO: {
-    strcpy(p,".go");
-    return need(outfn);
-  }
+  case MOJO: strcpy(p,".mojo"); return need(outfn);  
+  case PYTHON: strcpy(p,".py"); return need(outfn); 
+  case RUST: strcpy(p,".rs"); return need(outfn);
+  case GO: strcpy(p,".go"); return need(outfn);
   default: return need("./out.go");
   }; 
   

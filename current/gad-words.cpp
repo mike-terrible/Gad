@@ -14,7 +14,7 @@ namespace Gad {
   const char* Loop[] = { "@/","loop", "опять","далі", nullptr };
   const char* Done[] = { "?!)","done", "весть", "авось", "невже","погляд",nullptr };
   const char* Return[] =  { "result" , "exit", "ход", "дать", "здобич", nullptr };
-  const char* When[] = { "|","when", "когда" , "коли", nullptr };
+  const char* When[] = { "|","when", "while" ,"когда" , "коли", nullptr };
   const char* Sic[] = { "^^","sic","lay","here","вот", "вже", nullptr };
   const char* Else[] = { "?-", "else", "иначе", "погасло", "нема", "або", nullptr };
   const char* Then[] = { "?+", "then","ли" ,"тогда", "так" ,"є" , nullptr};
