@@ -14,7 +14,13 @@ int MyRT::goProc(MyRT* rt,char* p[],int nv) {
   if(rt->gen == PYTHON) rt->to("def "); 
   if(rt->gen == MOJO) rt->to("fn "); 
   if(rt->gen == RUST) rt->to("unsafe fn "); 
-  i++; char* xn = rt->getV(i,p,nv); 
+  i++; char* xn = rt->getV(i,p,nv);
+  strcpy(rt->curProc,xn);
+  if(rt->gen == ASM) {
+    rt->to("\n");
+    rt->to(xn),rt->to(":"),rt->to("\n");
+    return 0;
+  }; 
   rt->to(xn),rt->to("("); int narg = 0;
   for(;;) { i++; if(i>=nv) { rt->to(") "); break; };
     char* itIs = rt->getV(i,p,nv);

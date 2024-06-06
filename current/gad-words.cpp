@@ -5,7 +5,7 @@
 
 namespace Gad { 
   const char* Alias[] = { "\%\%\%",nullptr };
-  const char* Eval[] =  { ":=", "<-", "eval", "evil", "cal", "из", "рах", nullptr };
+  const char* Eval[] =  { ":=", "<-", "eval", "evil", "cal", "из", "рах","щось", nullptr };
   const char* Array[] = { "[]","array" , "ларь", "кошик", nullptr }; 
   const char* Init[] =  { "<-","init", "так", nullptr  };
   const char* With[] =  { "?","with","для", "по", "ще", nullptr };
@@ -24,8 +24,8 @@ namespace Gad {
   const char* Show[] ={ "!","show", "показать", "вистава",nullptr };
   const char* Mess[] = { "!!","mess", "скрепа", "скрижаль", "грамота", "новина",nullptr };
   const char* Run[] =  { "???","execute","exec","start","run","пора","час", nullptr };
-  const char* Amen[] = { "amen","end","аминь","все", nullptr };
-  const char* Declare[] = { "dcl","declare","пусть","да", "хай" , "ну",nullptr };
+  const char* Amen[] = { ":)", "amen","end","аминь","все", nullptr };
+  const char* Declare[] = { ":->","dcl","declare","пусть","да", "хай" , "ну",nullptr };
   const char* Proc[] =  { "proc","procedure", "десница","дело","справа", nullptr };
   const char* Is[] = { "is" , "суть", "докладно", "саме",nullptr  };
   const char* Aka[] = { ":","as","aka", "как", "пока" ,"таке", "це",nullptr }; 

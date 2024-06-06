@@ -38,7 +38,7 @@ int MyRT::goParse(char* pp[],int nv) {
     It(nullptr,Mess,MyRT::goMess),  
     It(nullptr,Run,MyRT::goRun), 
     It(nullptr,Amen,MyRT::goAmen), 
-    It(nullptr,Declare,MyRT::goDeclare), //
+    It(nullptr,Declare,MyRT::goDeclare), 
     It(nullptr,Is,MyRT::goIs), 
     It(nullptr,Proc,MyRT::goProc),
     It(nullptr,Init,MyRT::goInit),

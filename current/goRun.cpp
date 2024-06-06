@@ -12,6 +12,18 @@ int MyRT::goRun(MyRT* rt,char* p[],int nv) {
   i++; rt->xmain = rt->getV(i,p,nv); 
   i++; t = rt->getV(i,p,nv); 
   { rt->to(rt->ident);
+    if(rt->gen == ASM) {
+      rt->to(" .global main\n");
+      rt->to(" .text\n");
+      rt->to(" .align 64\n");
+      rt->to("main:\n");
+      rt->to("  push %rax\n");
+      rt->to("  call "),rt->to(rt->xmain),rt->to("\n  pop %rax\n  ret\n");
+      rt->to("  .align 64\n");
+      rt->to(rt->xmain),rt->to(":\n  nop\n");
+      strcpy(rt->curProc,rt->xmain);
+      return 0;
+    };
     if(rt->gen == RUST) rt->to("fn main() {\n"); 
     if(rt->gen == GO) rt->to("func main() {\n"); 
     if(rt->gen == MOJO) rt->to("fn main() :\n"); 

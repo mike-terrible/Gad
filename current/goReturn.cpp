@@ -9,6 +9,10 @@ int MyRT::goReturn(MyRT* rt,char* p[],int nv) {
   int i = 0;
   i++; 
   if(i == nv) {
+    if(rt->gen == ASM) {
+      rt->to("  ret\n");
+      return 0;
+    };
     rt->to(rt->ident),rt->to("return");
     if(rt->gen == RUST) rt->to(";");;
     rt->to("\n");

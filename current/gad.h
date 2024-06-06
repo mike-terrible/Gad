@@ -9,7 +9,7 @@
 namespace Gad {
   typedef enum { ANY, COMMENT } State;
 
-  typedef enum { GO , RUST , MOJO , PYTHON } CodeGen;
+  typedef enum { GO , ASM, RUST , MOJO , PYTHON } CodeGen;
   class MyRT;  
   using Fn = int(*)(MyRT*,char* [],int);  
  
@@ -23,6 +23,20 @@ namespace Gad {
   struct Pair {
     char* k; char* v;
   };
+  
+  typedef enum {
+    UNDEF,LIGHT,NUM,REAL,STRING
+  } DType;
+  
+  struct Var {
+    char xname[128]; bool isArray; int asize; DType dtype;
+  };
+  
+  extern int NVar;
+  extern Var Vars[256];
+  extern Var* varGet(char*);
+  extern Var* varNew(char*,bool,int,DType);
+  extern void varDump(void); 
 
   extern int nA;
   extern Pair AliasTab[256];
@@ -32,6 +46,7 @@ namespace Gad {
   //
   extern char infn[];
   extern char outfn[];
+  
   // types 
   extern const char* Str[];  
   extern const char* Num[];  
@@ -67,8 +82,6 @@ namespace Gad {
   extern const char* Done[];
   extern const char* Loop[];
   
-  
-
   struct MyRT {
     static const char* ver;  
     FILE *fi,*out;
@@ -76,6 +89,7 @@ namespace Gad {
     //
     bool inArray;
     int inInit;
+    char curProc[256];
     char curVar[256];
     //
     int inProc;
@@ -154,6 +168,8 @@ namespace Gad {
     char* onValue(char*);
     char* onType(char*);
     void setIdent(int);
+
+    void genAsmFmt(const char*,char*);
 
     MyRT* at(const char*);
     MyRT* seek(const char* []);

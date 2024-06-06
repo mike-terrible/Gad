@@ -25,7 +25,12 @@ int MyRT::goLoop(MyRT* rt,char* p[],int nv) {
 
 int MyRT::goAmen(MyRT* rt,char* p[],int nv) {
   rt->inProc = false; 
-  rt->to("\n"); rt->setIdent(rt->ident-2),rt->to(rt->ident);
+  rt->to("\n"); 
+  if(rt->gen == ASM) {
+    rt->to("  ret\n");
+    return 0;
+  };
+  rt->setIdent(rt->ident-2),rt->to(rt->ident);
   if((rt->gen == RUST) || (rt->gen == GO)) rt->to("}\n"); 
   if((rt->gen == MOJO) || (rt->gen == PYTHON)) rt->to("pass\n");
   return 0;

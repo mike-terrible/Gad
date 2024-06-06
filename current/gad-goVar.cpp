@@ -130,6 +130,11 @@ void MyRT::goArray(char* p[],int nv, char* varV, char* vsize, char* vtype, char*
    }; // switch
 }
 
+void MyRT::genAsmFmt(const char* fmt,char* var) {
+  to(curProc),to("."),to(var),to(".cnv:\n");
+  to("  .asciz \""),to(fmt),to("\"\n");
+}
+
 void MyRT::goVar(char* var, char* vtype, char* val) {
   if(var == NULL) throw 2; to(ident);
   if((gen == GO) || (gen == MOJO)) to("var "),to(var);
@@ -138,6 +143,38 @@ void MyRT::goVar(char* var, char* vtype, char* val) {
     else to("static mut "),to(var);
   };
   if(gen == PYTHON) to(var);
+  if(gen == ASM) {
+    DType dt = UNDEF;
+    to("  .data\n  .align 64\n");
+    to(curProc),to("."),to(var); to(":\n"); 
+    if(val != NULL) {
+      if(cmp(vtype,Str)) { 
+        to("  .asciz "),to(val),to("\"\n"); 
+        genAsmFmt("%s",var);  
+        dt = STRING;
+      } else if(cmp(vtype,Num)) { 
+        to("  .quad "),to(val),to("\n"); 
+        genAsmFmt("%d",var);
+        dt = NUM;
+      } else  if(cmp(vtype,Real)) { 
+        to("  .double"),to(val),to("\n"); 
+        genAsmFmt("%g",var); 
+        dt = REAL;
+      } else if(cmp(vtype,Light)) {  to(" .quad ");
+       if(cmp(val,On)) to("1"); if(cmp(val,Off)) to("0");
+       genAsmFmt("%d",var);    
+       dt = LIGHT;      
+      };
+      to("  .text\n  nop\n"); return;
+    };  
+    if(cmp(vtype,Str)) {   to("  .space 256,0\n"); genAsmFmt("%s",var); dt = STRING; }
+    else if(cmp(vtype,Num)) {   to("  .quad 0\n"); genAsmFmt("%d",var); dt = NUM; }
+    else if(cmp(vtype,Real)) {  to("  .double 0\n"); genAsmFmt("%g",var); dt = REAL; }
+    else if(cmp(vtype,Light)) { to("  .quad 0\n"); genAsmFmt("%d",var); dt = LIGHT; };
+    to("  .text\n  nop\n");
+    if(varGet(var)==NULL) varNew(var,false,0,dt);   
+    return;  
+  };
   if(vtype != NULL) {
     if(gen == GO) to(" "),to(onType(vtype));
     if(gen == RUST) to(":"),to(onType(vtype));

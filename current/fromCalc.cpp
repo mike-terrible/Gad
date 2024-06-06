@@ -26,9 +26,50 @@ static void eoi(MyRT* rt) {
 
 static char result[255];
 
-static void allocResult(MyRT* rt) {
+static void asmAllocResult(MyRT* rt) {
   sprintf(result,"gad_%d",zj);
-  rt->to("\n"); rt->to(rt->ident);
+  rt->to("  .data\n");
+  rt->to(result),rt->to(":\n");
+  rt->to("  .quad 0\n");
+  rt->to("  .text\n  nop\n");
+}
+
+static void asmAss(MyRT* rt,char* xto,char* xfrom) {
+  rt->onDebug("asmAss");
+  char from[128]; char to[128];
+  char q = xfrom[0];
+  bool literal = false;
+  if((q>='0') && (q<='9')) {
+   literal = true;
+   from[0]='$';
+   strcpy(&from[1],xfrom);
+   rt->to("  mov "),rt->to(from),rt->to(",%rsi\n");
+  } else {
+    strcpy(from,xfrom);
+    rt->to("  lea ");
+    if(memcmp("gad_",from,4)!=0) rt->to(rt->curProc),rt->to(".");
+    rt->to(from),rt->to("(%rip),%rsi\n");
+  };
+  strcpy(to,xto);
+  rt->to("  lea ");
+  if(memcmp("gad_",to,4)!=0) rt->to(rt->curProc),rt->to(".");
+  rt->to(to),rt->to("(%rip),%rdi\n");
+  if(literal) { rt->to(" mov %rsi,%rbx\n"); } 
+  else { rt->to("  mov (%rsi),%rbx\n"); };
+  rt->to("  mov %rbx,(%rdi)\n");
+}
+
+static void asmOp1(MyRT* rt,const char* xop) {
+  if(strcmp(xop," + 1") == 0) {
+    rt->to("  inc %rbx\n"); return;
+  };
+}
+
+static void allocResult(MyRT* rt) {
+  if(rt->gen == ASM) { asmAllocResult(rt); return; };
+  sprintf(result,"gad_%d",zj);
+  rt->to("\n"); 
+  rt->to(rt->ident);
   if((rt->gen == MOJO)||(rt->gen == GO)) rt->to("var "),rt->to(result),rt->to(" ");
   if(rt->gen == RUST) rt->to("let "),rt->to(result);
   zj++;
@@ -40,16 +81,38 @@ static int goOp1(MyRT* rt,const char* xop,int nt)  {
   char xn1[255];  strcpy(xn1, St[top].b ); 
   allocResult(rt);
   strcpy(St[top].b ,result); top ++;
-  rt->to(" = ");
-  rt->to(xn1); rt->to(xop); 
-  eoi(rt);
+  if(rt->gen == ASM) {
+    char q = xn1[0];
+    if((q>='0') && (q<='9')) {
+      char buf[128]; buf[0]='$';
+      strcpy(&buf[1],xn1);
+      rt->to("  mov "); rt->to(buf); rt->to(",%rbx\n"); 
+    } else {
+      rt->to("  lea ");
+      if(memcmp("gad_",xn1,4)!=0) rt->to(rt->curProc),rt->to(".");
+      rt->to(xn1),rt->to("(%rip),%rdi\n");
+      rt->to("  mov (%rdi),%rbx\n");
+    };
+    asmOp1(rt,xop);
+    rt->to("  mov %rbx,(%rdi)\n");
+  } else {
+    rt->to(" = ");
+    rt->to(xn1); rt->to(xop); 
+    eoi(rt);
+  };
   return top;
 }
+
+
 
 static int goAss(MyRT* rt,int nt) {
   int top = nt;
   top --; if(top<0) return 0; char xn2[255]; strcpy(xn2, St[top].b);
   top --; if(top<0) return 0; char xn1[255]; strcpy(xn1, St[top].b);
+  if(rt->gen == ASM) {
+     asmAss(rt,xn2,xn1);
+     return top;
+  };
   rt->to("\n"); 
   rt->to(rt->ident);
   rt->to(xn2);
@@ -60,12 +123,51 @@ static int goAss(MyRT* rt,int nt) {
   return top;
 }
 
+static void asmOp2(MyRT* rt, const char* xop, char* xto, char* xfrom) {
+  //
+  char from[128]; char to[128];
+  char q = xfrom[0];
+  if((q >= '0') && (q <= '9')) {
+    from[0]='$';  strcpy(&from[1],xfrom);
+    rt->to("  mov "),rt->to(from),rt->to(",%rsi\n"); 
+  } else {
+    rt->to("  lea "); 
+    if(memcmp("gad_",from,4)!=0) rt->to(rt->curProc),rt->to("."); 
+    rt->to(from); rt->to("(%rip),%rsi\n");
+    rt->to("  mov (%rsi),%rsi\n");
+  };
+  //
+  q = xto[0];
+  if((q >= '0') && (q <= '9')) {
+    to[0]='$'; strcpy(&to[1],xto);
+    rt->to("  mov "),rt->to(to),rt->to(",%rdi\n"); 
+  } else {
+    strcpy(to,xto);
+    rt->to("  lea "); 
+    if(memcmp("gad_",to,4)!=0) rt->to(rt->curProc),rt->to(".");
+    rt->to(to); rt->to("(%rip),%rdi\n");
+    rt->to("  mov (%rdi),%rdi\n");
+  };
+  //
+  if(strcmp(xop," + ")==0) { rt->to("  add %rsi,%rdi\n"); }
+  else if(strcmp(xop," - ")==0) { rt->to("  sub %rsi,%rdi\n"); }
+  else if(strcmp(xop," * ")==0) { rt->to("  mul %rsi,%rdi\n"); }
+  //
+  rt->to("  lea "); rt->to(result); rt->to("(%rip),%rsi\n");
+  rt->to("  mov %rdi,(%rsi)\n");
+}
+
+
 static int goOp2(MyRT* rt, const char* xop,int nt) {
   int top = nt;
   top --; if(top<0) return 0; char xn2[255]; strcpy(xn2, St[top].b);
   top --; if(top<0) return 0; char xn1[255]; strcpy(xn1, St[top].b);
   allocResult(rt);
   strcpy(St[top].b, result); top ++;
+  if(rt->gen == ASM) {
+    asmOp2(rt,xop,xn1,xn2);
+    return top;
+  };
   rt->to(" = ");
   rt->to(xn1); rt->to(xop); rt->to(xn2); 
   eoi(rt);
@@ -76,7 +178,6 @@ static int goOp2(MyRT* rt, const char* xop,int nt) {
 int MyRT::fromCalc(char* varName, int iStart,int nv,char* p[]) {
   int i = iStart;
   int top = 0;
-  onDebug("fromCalc");
   for(;;) { i ++; if(i >= nv) break; 
     char* t = p[i];
     if(cmp(t,Repeat)) break; if(cmp(t,Then)) break;
@@ -104,11 +205,16 @@ int MyRT::fromCalc(char* varName, int iStart,int nv,char* p[]) {
       top ++;
     };
   }; // for
-  to("\n");
-  to(ident);
+  if(gen != ASM) {
+    to("\n");
+    to(ident);
+  };
   if(strcmp(varName, "?")!=0) {
-    to(varName); to(" = "); to(St[0].b); 
-    eoi(this); 
+    if(gen == ASM) asmAss(this,varName,St[0].b);
+    else {
+      to(varName); to(" = "); to(St[0].b); 
+      eoi(this);
+    }; 
    }
 
   return 0;
@@ -116,7 +222,6 @@ int MyRT::fromCalc(char* varName, int iStart,int nv,char* p[]) {
 
 int MyRT::goEval(MyRT* rt,char* p[],int nv) {
   int i = 0; char* t; char any[2];
-  rt->onDebug("goEval");
   strcpy(any,"?");
   while(++i < nv) {
     t = p[i];

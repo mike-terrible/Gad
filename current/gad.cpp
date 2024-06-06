@@ -46,20 +46,25 @@ void gad(char* fn, char* opt) {
       t = rt->seekNotBlank(li); if(t == NULL) continue;
       if(rt->cmp(t, Gad::EndComment)) { rt -> st = ANY;  } 
       else {
-        rt->to(rt->ident);
-        if((rt->gen == GO) || (rt->gen == RUST)) rt->to("//",li);
-        if((rt->gen == MOJO) || (rt->gen == PYTHON)) rt->to("#",li);
+        if(rt->gen == ASM) rt->to("#",li);  
+        else {
+          rt->to(rt->ident);
+          if((rt->gen == GO) || (rt->gen == RUST)) rt->to("//",li);
+          if((rt->gen == MOJO) || (rt->gen == PYTHON)) rt->to("#",li);
+        };  
       };
       continue;
     };
   };
   if(rt->gen == PYTHON) rt->to("main()\n");
+  if(rt->gen == ASM) rt->to("  .end\n");
   fclose(f);
+  varDump();
 }
 
 int main(int argc,char** argv) {
   if(argv[1] == NULL) {
-    printf("\n%s\ngad имя-файла[.гад] [-go | -mojo | -rust | -python ]\n по умолчанию -go\n",MyRT::ver);
+    printf("\n%s\ngad имя-файла[.гад] [-go | -mojo | -rust | -python | -asm ]\n по умолчанию -go\n",MyRT::ver);
     return 0;
   };
   try {
