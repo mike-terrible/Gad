@@ -124,8 +124,11 @@ namespace Gad {
     const char* atom;
     char* xmain;
 
+    int fromEvil(char*, int,int,char* []); 
+
     MyRT(FILE*,char*);
 
+    void onDebug(const char*,const char*);
     void onDebug(const char*);
 
     int need(const char*);

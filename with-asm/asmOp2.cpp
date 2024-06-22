@@ -50,7 +50,7 @@ void Gad::asmOp2(MyRT* rt, const char* xop, char* xto, char* xfrom) {
   dt = typeOfLiteral(xto);
   if(dt==NUM) {
     sprintf(to,"$%s",xto);
-    rt->to("  mov "),rt->to(to),rt->to(",%rdi\n"); 
+    rt->to("  movq "),rt->to(to),rt->to(",%rdi\n"); 
   } else {
     if(memcmp("gad_",xfrom,4)!=0) sprintf(to,"%s.%s",rt->curProc,xto); 
     else strcpy(to,xto);

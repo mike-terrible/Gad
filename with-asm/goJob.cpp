@@ -6,6 +6,7 @@
 using namespace Gad;
 
 int MyRT::goJob(MyRT* rt,char* p[],int nv) { 
+  /*
   int i = 0;
   i++; char* t = rt->getV(i,p,nv); rt->to("\n"),rt->to(rt->ident),rt->to(t),rt->to("(");
   int np = 0;
@@ -17,6 +18,7 @@ int MyRT::goJob(MyRT* rt,char* p[],int nv) {
     };
   };
   if(rt->gen == RUST) rt->to(");\n"); else rt->to(")\n");
+  */
   return 0;
 }
 
