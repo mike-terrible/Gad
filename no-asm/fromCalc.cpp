@@ -112,6 +112,49 @@ static int goOp2(MyRT* rt, const char* xop,int nt) {
   return top;
 }
 
+int MyRT::fromEvil(char* varName, int iStart,int nv,char* p[]) {
+  int npp  = 0;
+  static char brOpen[2]; brOpen[0]='('; brOpen[1]=0;
+  char* pp[128];
+  char* ops[128]; char* aa[128];
+  int cop = 0; int carg = 0;
+  int i = iStart;;
+  for(;;) {
+    i++; if(i>=nv) break; 
+    char* t =  p[i];
+    if(t[0] == ')') {
+      if(cop>0) { cop--;
+        char* xop = ops[cop];
+        if(isOp(this,xop)) {
+          char* a1 = NULL; char* a2 = NULL;
+          if(carg > 0) {
+            carg--;  a1 = aa[carg]; if(a1[0]!='(') pp[npp]=a1,npp++;
+          };
+          if(carg > 0) {
+            carg--; a2 = aa[carg]; if(a2[0]!='(') pp[npp]=a2,npp++;
+          };
+          pp[npp]=xop,npp++;
+        };
+      };
+      continue;
+    };
+    if(isOp(this,t)) { ops[cop] = t; cop++; }
+    else {
+      aa[carg] = t; carg++;
+    };
+  }; // for
+  to("\n");
+  onDebug("p:"," ");
+  { int j = 0;
+    while(j<npp) {
+      char* a = pp[j]; j++;
+      if(a[0] != '(') to(a),to(" ");
+    };
+  };
+  to("\n");
+  fromCalc(varName,-1,npp,pp);
+  return 0;
+}
 
 int MyRT::fromCalc(char* varName, int iStart,int nv,char* p[]) {
   int i = iStart;
@@ -119,6 +162,7 @@ int MyRT::fromCalc(char* varName, int iStart,int nv,char* p[]) {
   for(;;) { i ++; if(i >= nv) break; 
     char* t = p[i];
     if(cmp(t,Repeat)) break; if(cmp(t,Then)) break;
+    if(cmp(t,"(")) return fromEvil(varName,i,nv,p);
     if(isOp(this,t)) {
       to(ident);
       if(cmp(t,"inc") || cmp(t,"++")) top = goOp1(this," + 1",top);
@@ -152,6 +196,7 @@ int MyRT::fromCalc(char* varName, int iStart,int nv,char* p[]) {
 
   return 0;
 }
+
 
 int MyRT::goEval(MyRT* rt,char* p[],int nv) {
   int i = 0; char* t; char any[2];
