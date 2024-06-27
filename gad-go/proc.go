@@ -7,12 +7,12 @@ func GenProc(nv int, p [256]string ) {
   var narg = 0;
   InProc = true;
   var i = 0;
-  To(Ident);
+  To(GetIdent());
   switch Mode {
-  case "-go": { Wr("func "); }
-  case "-python": { Wr("def "); }
-  case "-mojo": { Wr("fn "); }
-  case "-rust": { Wr("unsafe fn "); }
+  case GO: { Wr("func "); }
+  case PYTHON: { Wr("def "); }
+  case MOJO: { Wr("fn "); }
+  case RUST: { Wr("unsafe fn "); }
   default:
   };
   i += 1; if i>= nv { return; }; var xn = p[i];
@@ -22,32 +22,31 @@ func GenProc(nv int, p [256]string ) {
     if Cmp(it_is, RETURN) {
       i += 1; if i>= nv { break; }; var act = p[i];
       var ztype = OnType(act);
-      if Mode == "-python" { Wr(") :\n"); Ident += 2; return; };
+      if Mode == PYTHON { Wr(") :\n"); SetIdent(GetIdent() + 2); return; };
       var nz = len(ztype);
       if nz > 0 {
-         if Mode == "-go" {
-            Wr(") "); Wr(ztype); Wr(" {\n"); Ident += 2; return;
+         if Mode == GO {
+            Wr(") "); Wr(ztype); Wr(" {\n"); SetIdent( GetIdent() + 2); return;
          };
-         if Mode == "-mojo" {
+         if Mode == MOJO {
            Wr(") -> "); Wr(ztype); Wr(" :\n"); 
-           Ident += 2; return;
+           SetIdent( GetIdent() + 2 ); return;
          };
-         if Mode == "-rust"  {
+         if Mode == RUST  {
            Wr(") -> ");
            if ztype == "&str" { Wr("String"); } else { Wr(ztype ); };
            Wr(" {\n");
-           Ident += 2; 
+           SetIdent( GetIdent() + 2 ); 
            return; 
          };  
       }; // nz > 0
     }; // RETURN
     if Cmp(it_is, IS) {
       switch Mode {
-      case "-rust" , "-go": { Wr(") {\n"); } 
-      case "-mojo" , "-python": { Wr(") :\n"); }
-      default:
+      case RUST , GO: { Wr(") {\n"); } 
+      case MOJO , PYTHON: { Wr(") :\n"); }
       };
-      Ident += 2; 
+      SetIdent(GetIdent() + 2 );
       return;
     };
     if Cmp(it_is, WITH) {
@@ -59,11 +58,10 @@ func GenProc(nv int, p [256]string ) {
         i += 1; if i >= nv { return; }; 
         var xtype = p[i];
         var ztype = OnType(xtype);
-        if Mode == "-go" { Wr(" "); Wr(ztype ); }; 
-        var mojorust = false;
-        if Mode == "-mojo" { mojorust = true; };
-        if Mode == "-rust" { mojorust = true; };
-        if mojorust { Wr(" :"); Wr(ztype); };
+        switch Mode {
+        case GO: { Wr(" "); Wr(ztype ); }; 
+        case MOJO,RUST: { Wr(" :"); Wr(ztype); };
+        };
       };  // AKA    
     };  // WITH
   }; // loop

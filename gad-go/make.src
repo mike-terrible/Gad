@@ -1,0 +1,2 @@
+go build -compiler gccgo -gccgoflags '-O3 -s'
+

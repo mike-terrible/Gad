@@ -3,7 +3,7 @@
 
 package main
 
-import "fmt"
+//import "fmt"
 import "strings"
 
 func Lexer(pp string) ( ret [256]string , nret int  ) {
@@ -49,15 +49,17 @@ func Lexer(pp string) ( ret [256]string , nret int  ) {
     ret[nret] = buf;
     nret += 1;
   };
-  // output
-  i = 0;
+  // output 
+  i = 0
+  var ok bool
+  var k string
+  var v string
   for i < nret {
-    var be = ret[i]; 
-    fmt.Print("<! {")
-    fmt.Print(be)
-    fmt.Print("} !>");
-    i += 1;
+    v = ret[i];
+    k,ok = Alias[v];
+    if(ok) { ret[i] = k };
+    print("{", ret[i],"} "); i += 1;
   };
-  fmt.Println("\n");
+  print("\n")
   return;
 }

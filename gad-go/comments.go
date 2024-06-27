@@ -4,23 +4,29 @@
 package main
 
 var IsComment bool = false;
+var IsLine = true;
 
 func CheckComment(a string) { 
-  if Cmp(a, END_COMMENT ) {
-    IsComment = false; 
-    Wr("\n");
-    return
+  switch {
+  case Cmp(a, END_COMMENT ): {
+    IsComment = false; IsLine = false;
   }
-  if Cmp(a, BEGIN_COMMENT ) {
-    IsComment = true; return
+  case Cmp(a, BEGIN_COMMENT): {
+    IsComment = true;  IsLine = false;
   }
+  default: { IsLine = true; }
+  };
 }
 
 func GenComment(a string) {
+ if !IsLine { return; };
+ if Mode == ASM {
+   Wr("\n"); Wr("# "); Wr(a); Wr("\n");
+ };
+ To(GetIdent());
  switch Mode {
- case "-rust","-go" : { Wr("// ");  Wr(a); Wr("\n"); }
- case "-mojo", "-python" :  { Wr("# "); Wr(a); Wr("\n"); }
- default: 
+ case RUST,GO : { Wr("// "); Wr(a); Wr("\n"); }
+ case MOJO,PYTHON :  { Wr("# "); Wr(a); Wr("\n"); }
  };
 }
 

@@ -2,24 +2,30 @@
 //
 package main
 
-import "strings"
+//import "strings"
 
 func GenIf(nv int, p [256]string )  {
-  var i = 0; 
-  To(Ident); Wr("if");
-  for {
-    i += 1; if i >= nv { break; };
-    var t = p[i];
-    if Cmp(t, THEN) {
+  //var i = 0;
+  GenEval(nv,p);
+  /*
+  i += 1; if i >= nv { return; }; 
+  var t = p[i]; 
+  To(Ident); Wr("if "); Wr( t);
+  if strings.HasPrefix(t,"\"") { Wr("\""); };
+  for { 
+    i += 1; if i >= nv { return; };  
+    t = p[i]; 
+    if Cmp(t,THEN) {
       switch Mode {
-      case "-rust","-go": { Wr(" {\n");  Ident += 2; return; }
-      case "-mojo","-python": { Wr(" :\n"); Ident += 2; return; }
+      case RUST,GO: { Wr(" {\n");  }
+      case MOJO,PYTHON: { Wr(" :\n"); }
       default: 
-      };
-      return;
+      }; 
+      Ident += 2; return;
     };
-    Wr(" "); Wr(t); 
-    if strings.HasPrefix(t,"\"") { Wr("\""); };    
-  }
+    Wr(" "); Wr( t); if strings.HasPrefix(t,"\"") { Wr("\""); };
+  };
+  */
 }
+
 

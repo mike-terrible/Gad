@@ -5,11 +5,11 @@ package main
 
 func GenThen() { 
   switch Mode {
-  case "-go","-rust":  { Wr(" {\n");  }
-  case "-mojo","-python": { Wr(" :\n"); }
+  case GO,RUST:  { Wr(" {\n");  }
+  case MOJO,PYTHON: { Wr(" :\n"); }
   default:
   };  
-  Ident += 2;
+  To(GetIdent() + 2);
 }
 
 

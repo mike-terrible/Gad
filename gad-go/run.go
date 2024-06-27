@@ -9,34 +9,45 @@ func GenRun(nv int, p [256]string )  {
   i += 1; if i >= nv { return; };
   var xmain = p[i]; 
   i += 1; if i >= nv { return; };
-  To(Ident);
+  To(GetIdent());
   switch Mode {
-  case "-rust": { Wr("fn main() {\n"); }
-  case "-go": { Wr("func main() {\n"); }
-  case "-mojo": { Wr("fn main() :\n"); }
-  case "-python": { Wr("def main() :\n"); }
-  default:
-  };
-  Ident += 2; To(Ident);
-  if Mode == "-rust" { Wr("unsafe { "); };
-  Wr(xmain); Wr("()");
-  if Mode == "-rust" { Wr("; }"); };
-  Wr("\n");
-  Ident -= 2; To(Ident);
-  switch Mode {
-  case "-go","-rust": { Wr("}\n"); }
-  default:
-  };
-  To(Ident);
-  switch Mode {
-  case "-rust": { Wr("unsafe fn "); Wr(xmain); Wr("() {\n");  } 
-  case "-go": { Wr("func "); Wr(xmain); Wr("() {\n"); } 
-  case "-mojo": { Wr("fn "); Wr(xmain); Wr("() :\n"); } 
-  case "-python": { Wr("def "); Wr(xmain); Wr("() :\n"); }
-  default:
-  }; 
-  //
-  Ident += 2; 
+  case RUST: { Wr("fn main() {\n"); }
+  case GO: { Wr("func main() {"); }
+  case MOJO: { Wr("fn main() :\n"); }
+  case PYTHON: { Wr("def main() :\n"); }
+  case ASM: {
+    Wr("main: push %rax\n");
+    Wr(xmain); Wr(": xor %rax,%rax\n");
+    CurProc = xmain;
+    return;
+  }};
+  switch Mode { 
+  case RUST: { 
+    To(GetIdent() + 2);
+    Wr("unsafe { "); Wr(xmain); Wr("();  };\n");
+    To(GetIdent() - 2); Wr("}\n");
+    To( GetIdent() );
+    Wr("unsafe fn "); Wr(xmain); Wr("() {\n");
+    To(GetIdent() + 2);
+  }
+  case GO: {
+    To(GetIdent() + 2); Wr(xmain); Wr("()");
+    To(GetIdent() - 2); Wr("}\n");
+    To(GetIdent()); Wr("func "); Wr(xmain); Wr("() {\n");
+    To(GetIdent() + 2);
+  }
+  case MOJO: {
+    To(GetIdent() + 2); Wr(xmain); Wr("()\n");
+    To(GetIdent() - 2); Wr("}\n");
+    To(GetIdent()); Wr("fn "); Wr(xmain); Wr("() :\n");
+    To(GetIdent() + 2 );
+  }
+  case PYTHON: {
+    To(GetIdent() + 2); Wr(xmain); Wr("()\n");
+    To(GetIdent() - 2); 
+    Wr("def "); Wr(xmain); Wr("() :\n");
+    To(GetIdent() + 2);
+  }};
 }
 
 

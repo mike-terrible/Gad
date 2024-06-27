@@ -5,11 +5,16 @@ package main
 
 import "strings"
 
+func AsmGenJob(nv int, p [256]string ) {
+
+}
+
 func GenJob(nv int, p [256]string ) {
+  if Mode == ASM { AsmGenJob(nv, p ); return; }
   var i = 0;
   i += 1; if i >= nv { return; };
   var t = p[i];
-  Wr("\n"); To(Ident); Wr(t); Wr("(");
+  To(GetIdent()); Wr(t); Wr( "(");
   var np = 0; 
   for { i += 1; if i >= nv { break; }; t = p[i];
     if Cmp(t,WITH) { i += 1; if i >= nv { break; }; 
@@ -18,9 +23,7 @@ func GenJob(nv int, p [256]string ) {
       if strings.HasPrefix(t,"\"") { Wr("\""); };
     }; 
   };
-  if Mode == "-rust" {
-    Wr(");\n");
-  } else {
+  if Mode == RUST { Wr(");\n"); } else {
     Wr(")\n");
   };
 }

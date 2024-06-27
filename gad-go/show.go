@@ -12,18 +12,18 @@ func GenShow(nv int, p [256]string )  {
        i += 1; if i >= nv { break; }; 
        t = p[i]; 
        switch Mode {
-       case "-rust": {
-         To(Ident); Wr("print!(\"{ } \","); Wr(t); 
+       case RUST: {
+         To(GetIdent()); Wr("print!(\"{ } \","); Wr(t); 
          if strings.HasPrefix(t, "\"") {  Wr("\"");  };  
          Wr(");\n");
        }
-       case "-go": {
-         To(Ident); Wr("print("); Wr(t); 
+       case GO: {
+         To(GetIdent()); Wr("print("); Wr(t); 
          if strings.HasPrefix(t,"\"") { Wr("\""); };
          Wr(",\" \");\n");
        }
-       case "-mojop", "python": {
-         To(Ident); Wr("print("); Wr(t); 
+       case MOJO, PYTHON: {
+         To(GetIdent()); Wr("print("); Wr(t); 
          if strings.HasPrefix(t,"\"") { Wr("\""); }; 
          Wr(",end =\" \")\n");
        }

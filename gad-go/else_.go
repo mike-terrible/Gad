@@ -4,12 +4,13 @@
 package main
 
 func GenElse()  {
-  Ident -= 2; 
+  if Mode == ASM { AsmElse(); return; };
+  SetIdent( GetIdent() - 2 );
   switch Mode {
-  case "-go","-rust": { To(Ident); Wr("} else {\n");  }
-  case "-mojo","-python": { To(Ident); Wr("else:\n"); }
+  case GO,RUST: { To(GetIdent()); Wr("} else {\n"); } 
+  case MOJO,PYTHON: { To(GetIdent()); Wr("else:\n");  }
   default:
-  }; 
-  Ident += 2;
+  };
+  SetIdent( GetIdent() + 2 );
 }
 

@@ -4,28 +4,48 @@
 package main
 
 func GenInit() {
-  To(Ident);
+  Wr("\n")
   InArray = false;
 }
 
 
+func RustLoop() {
+  To(GetIdent()); Wr("}\n");
+}
+
+func GoLoop() {
+  To(GetIdent()); Wr("}\n");
+}
+
 func GenLoop() {
-  Wr("\n"); Ident -= 2; To(Ident);
+  DbgTrace("GenLoop");
+  if Mode == ASM { AsmLoop(); return; };
+  SetIdent(GetIdent() - 2); To(GetIdent());
   switch Mode {
-  case "-rust","-go" : Wr("};\n"); 
-  case "-mojo","-python" : Wr("pass\n");
-  default:
+  case RUST: { RustLoop(); }
+  case GO: { GoLoop(); }
+  case MOJO: { MojoLoop(); }
+  case PYTHON: { PyLoop(); }
   }
 }
 
-func GenDone() { GenLoop(); }
+func GenDone() { 
+  if Mode == ASM { AsmDone(); return; }
+  GenLoop(); 
+}
+
+func AsmAmen() {
+  InProc = false;
+  Wr("  pop %rax\n"); Wr("  ret\n");
+}
 
 func GenAmen() {
+  if Mode == ASM { AsmAmen(); return; }
   InProc = false; 
-  Wr("\n"); Ident -= 2; To(Ident);
+  To(GetIdent() - 2);
   switch Mode {
-  case "-rust", "-go": { Wr("}\n"); }
-  case "-mojo","-python": { Wr("pass\n"); }
+  case RUST, GO: { Wr("}\n"); }
+  case MOJO,PYTHON: { Wr("pass\n"); }
   default:
   };
 }

@@ -8,7 +8,7 @@ import "strings"
 
 
 func GenSic(nv int, p [256]string )  {
-  To(Ident); var i = 0; 
+  To(GetIdent()); var i = 0; 
   for { i += 1;
     if i >= nv {
       if Mode == "-rust" { Wr(";"); };

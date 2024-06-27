@@ -1,32 +1,35 @@
 // 
-// mess.rs
+// mess.go
 //
 package main
 
 import "strings"
 
 func GenMess(nv int, p [256]string)  {
-  To(Ident);
+  To(GetIdent());
   var i = 0; 
   i += 1; if i >= nv { return; };
   var t = p[i];
   switch Mode {
-  case "-rust": {
+  case ASM: {
+    AsmMess(t); return;
+  }
+  case RUST: {
     Wr("println!(");
     if strings.HasPrefix(t,"\"") { 
       Wr(t); Wr("\""); 
     } else { 
       Wr("\"{ }\","); Wr(t ); 
     };
-    Wr(");\n"); return ;
+    Wr(");\n"); return;
   }
-  case "-go": {
+  case GO: {
     Wr("println("); Wr(t);
     if strings.HasPrefix(t,"\"") { Wr("\""); };
     Wr(")\n");
     return;
   }
-  case "-mojo","python": {
+  case MOJO,PYTHON: {
     Wr("print("); Wr(t);
     if strings.HasPrefix(t, "\"") { Wr("\""); };
     Wr(")\n")

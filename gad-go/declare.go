@@ -1,5 +1,5 @@
 // 
-// declare.rs
+// declare.go
 //
 package main
 
@@ -38,23 +38,19 @@ func GenWith(nv int, p [256]string) {
     if i >=nv { break; }
     t = p[i];
     switch(Mode) {
-    case "-go","-rust":
-    {  To(Ident);
+    case GO, RUST:
+    { To(GetIdent());
       Wr(CurVar);
       buf = fmt.Sprintf("%d",InInit);
-      Wr("["); Wr(buf); Wr("]");
-      Wr(" = ");
-      Wr(t); 
+      Wr("["); Wr(buf); Wr("]"); Wr(" = "); Wr(t);
       if strings.HasPrefix(t, "\"") { Wr("\""); };
       if Mode == "-rust" { Wr(";"); };
       Wr("\n");
       InInit += 1;
     }  
-    case "-mojo","-python":
-    { To(Ident);
-      Wr(CurVar);
-      Wr(".append(");
-      Wr(t);
+    case MOJO,PYTHON:
+    { To(GetIdent());
+      Wr(CurVar); Wr(".append("); Wr(t);
       if strings.HasPrefix(t,"\"") { Wr("\""); };
       Wr(")\n");
     }
@@ -64,14 +60,11 @@ func GenWith(nv int, p [256]string) {
 }
 
 func goArray(nv int, p [256]string, varV string, vsize string, vtype string, be string) {
-  if len(varV) == 0 { return; }; To(Ident);
-  if Mode == "-go" {
-    Wr("var ");
-    Wr(varV); Wr(" ");
-    Wr("["); 
+  if len(varV) == 0 { return; }; To(GetIdent());
+  if Mode == GO {
+    Wr("var "); Wr(varV); Wr(" "); Wr("["); 
     if  vsize != "?"  { Wr(vsize); };
-    Wr("]");
-    Wr(OnType(vtype));
+    Wr("]"); Wr(OnType(vtype));
     if(be == "") { InArray = false; Wr(";\n"); return; };
     CurVar = varV;
     Wr("\n");
@@ -80,73 +73,56 @@ func goArray(nv int, p [256]string, varV string, vsize string, vtype string, be 
       InInit = 0;
     } else { 
       InInit = 1;
-      To(Ident);
-      Wr(varV);
-      Wr("[0] = "); 
-      Wr(be); if strings.HasPrefix(be,"\"")  { Wr("\""); };
+      To(GetIdent());
+      Wr(varV); Wr("[0] = "); Wr(be);
+      if strings.HasPrefix(be,"\"")  { Wr("\""); };
       Wr("\n");
     }; 
     return;
   };
-  if Mode == "-rust" {
+  if Mode == RUST {
     if(InProc)  { Wr("let mut "); Wr(varV); } else {  
       Wr("static mut "); Wr(varV);  
     };
-    Wr(": ");
-    Wr("[");
-    Wr(OnType(vtype));
-    Wr(";");
+    Wr(": "); Wr("["); Wr(OnType(vtype)); Wr(";");
     if  vsize != "?" { Wr(vsize); };
-    Wr("]");
-    Wr(" = ["); Wr(OnValue(vtype)); Wr(";"); Wr(vsize); 
-    Wr("];\n");
+    Wr("]"); Wr(" = ["); Wr(OnValue(vtype)); Wr(";"); Wr(vsize); Wr("];\n");
     if be == "" { InArray = false; return; };
     CurVar = varV;
     InArray = true;  
-    if Cmp(be,AKA) {
-      InInit = 0;
-    } else {
-      InInit = 1;
-      To(Ident);
-      Wr(varV);
-      Wr("[0] = "); 
-      Wr(be); if strings.HasPrefix(be, "\"")  { Wr("\""); };
+    if Cmp(be,AKA) { InInit = 0; } else {
+      InInit = 1; To(GetIdent());
+      Wr(varV); Wr("[0] = "); Wr(be);
+      if strings.HasPrefix(be, "\"")  { Wr("\""); };
       Wr(";");
     };
     Wr("\n");
     return;
   };
-  if(Mode == "-python") {
-    Wr(varV);
-    Wr(" = [ ]\n");
+  if(Mode == PYTHON) {
+    Wr(varV); Wr(" = [ ]\n");
     if(be == "") { InArray = false; Wr("\n"); return; };
     CurVar = varV;
     InArray = true; 
     if Cmp(be,AKA) { InInit = 0; } else {
       InInit = 1
-      To(Ident);
-      Wr(CurVar);
-      Wr(".append("); 
-      Wr(be); if strings.HasPrefix(be,"\"") { Wr("\""); };
-    };    
+      To(GetIdent());
+      Wr(CurVar); Wr(".append("); Wr( be);
+      if strings.HasPrefix(be,"\"") { Wr("\""); };
+    }; 
     Wr("\n");
     return;
   };
-  if(Mode == "-mojo") {
-    Wr("var ");
-    Wr(varV);
-    Wr(" = List[");
-    Wr(OnType(vtype));
-    Wr("]()");
+  if(Mode == MOJO) {
+    Wr("var "); Wr(varV); Wr(" = List["); Wr(OnType(vtype)); Wr("]()");
     CurVar = varV;
     InArray = true; 
     if be == "" { InArray = false; Wr("\n"); return; };
     if Cmp(be,AKA) { InInit = 0; } else {
       InInit = 1
-      To(Ident);
-      Wr(CurVar);
-      Wr(".append("); 
-      Wr(be); if strings.HasPrefix(be,"\"") { Wr("\""); };
+      To(GetIdent());
+      Wr(CurVar);Wr(".append("); Wr( be ); 
+      if strings.HasPrefix(be,"\"") { Wr("\""); };
     }; 
     Wr("\n");
     return;
@@ -155,53 +131,53 @@ func goArray(nv int, p [256]string, varV string, vsize string, vtype string, be 
 
 func goVar(varV string, vtype string, val string )  {
   if len(varV) == 0 { return; };
-  To(Ident);
+  if Mode == ASM { AsmGoVar(varV,vtype,val);  return; }
+  To(GetIdent());
   switch Mode {
-  case "-go","-mojo": { Wr("var "); Wr(varV); }
-  case "-rust": {
+  case  GO,MOJO: { Wr("var "); Wr(varV); }
+  case RUST: {
     if InProc {
       Wr("let mut "); Wr(varV);
-    } else { Wr("static mut "); Wr(varV); }; 
+    } else { Wr("static mut "); Wr(varV ); }; 
   }
-  case "-python": { Wr(varV); }
+  case PYTHON: { /* Wr(varV); */ }
   default:
   };
   if len(vtype) > 0 {
     var ztype = OnType(vtype);
     switch Mode {
-    case "-go": { 
-      Wr(" "); Wr(ztype);
-    }
-    case "-rust", "-mojo": {
-      Wr(":"); Wr(ztype);
-    }
-    default:
-    };  
-  };  
+    case GO: { Wr(" "); Wr( ztype ); }
+    case RUST,MOJO: { Wr(":"); Wr(ztype); }
+    };
+  }; 
   if len(val) > 0 {
     if Cmp(val,ON) {
       switch Mode {
-      case "-rust": { Wr(" = true;\n"); }
-      case "-go": { Wr(" = true\n"); }
-      case "-mojo","-python": { Wr(" = True\n"); }
-      default:
+      case RUST: { Wr(" = true;\n"); }
+      case GO: { Wr(" = true\n"); }
+      case MOJO,PYTHON: { Wr(" = True\n"); }
       };
       return ;
     };
     if Cmp(val,OFF) {
       switch Mode {
-      case "-rust": { Wr(" = false;\n"); }
-      case "-go": { Wr(" = false\n"); }
-      case "-mojo","-python": { Wr(" = False\n"); }
-      default:
+      case RUST: { Wr(" = false;\n"); }
+      case GO: { Wr(" = false\n"); }
+      case MOJO,PYTHON: { Wr(" = False\n"); }
       };
       return;
     };
     Wr(" = "); Wr(val);
     if strings.HasPrefix(val, "\"") {  Wr("\""); }
-    if Mode == "-rust" { Wr(";"); };
+    if Mode == RUST { Wr(";"); };
     Wr("\n");
-  };
+  } else {
+    switch Mode {
+    case RUST: { Wr(";\n"); }
+    default: { Wr("\n"); }
+    };
+
+  }
 }   
 
 func OnValue(vtype string) string {
@@ -215,32 +191,32 @@ func OnValue(vtype string) string {
 func OnType(vtype string) string {
   if Cmp(vtype,STR) {
     switch Mode {
-    case "-go": { return "string"; }
-    case "-rust": { return "&str"; }
-    case "-mojo": { return "String"; }
+    case GO: { return "string"; }
+    case RUST: { return "&str"; }
+    case MOJO: { return "String"; }
     default: { return ""; }
     };
   };
   if Cmp(vtype,NUM) {
     switch Mode {
-    case "-rust": { return "i64"; }
-    case "-go": { return "int"; }
-    case "-mojo": { return "Int"; }
+    case RUST: { return "i64"; }
+    case GO:  { return "int"; }
+    case MOJO: { return "Int"; }
     default: { return ""; }
     };
   };
   if Cmp(vtype,REAL) {
     switch Mode {
-    case "-rust": { return "f64"; }
-    case "-go": { return "float64"; }
-    case "-mojo": { return "Float64"; }
+    case RUST: { return "f64"; }
+    case GO:  { return "float64"; }
+    case MOJO: { return "Float64"; }
     default: { return ""; }
     };
   };
   if Cmp(vtype,LIGHT) {
     switch Mode {
-    case "-go","-rust": { return "bool"; }
-    case "-mojo": { return "Bool"; }
+    case GO,RUST: { return "bool"; }
+    case MOJO: { return "Bool"; }
     default:
     }; 
   };
