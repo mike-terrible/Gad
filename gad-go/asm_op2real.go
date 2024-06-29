@@ -11,12 +11,12 @@ func AsmCmpsd(cmpsdval string,xto string,xfrom string) {
   //var literal bool = false;
   var dt = TypeOfLiteral(xfrom);
   if (dt == DTYPE_NUM) || (dt == DTYPE_REAL) {
-    var dl uint64 = 0;
+    var dl string;
     if dt == DTYPE_NUM { dl = ValNum(xfrom); };
     if dt == DTYPE_REAL { dl = ValReal(xfrom); };
-    from = fmt.Sprintf("$%d",dl);
-    Wr("# movq "); Wr(xfrom); Wr(",%rax\n");
-    Wr("  movq "); Wr(from); Wr(",%rax\n");
+    from = dl
+    Wr("# movq ",xfrom,",%rax\n");
+    Wr("  movq $",from,",%rax\n");
     Wr("  movq %rax,%xmm8\n"); 
   } else {
     if xfrom != "gad_"  { from = fmt.Sprintf("%s.%s",CurProc,xfrom); 
@@ -26,10 +26,10 @@ func AsmCmpsd(cmpsdval string,xto string,xfrom string) {
   };
   dt = TypeOfLiteral(xto);
   if (dt == DTYPE_NUM) || (dt == DTYPE_REAL) {
-    var dl uint64 = 0;
+    var dl string;
     if dt == DTYPE_NUM { dl = ValReal(xto); }
     if dt == DTYPE_REAL { dl = ValReal(xto); };
-    to = fmt.Sprintf("$%ld",dl); 
+    to = fmt.Sprintf("$%s",dl); 
     Wr("# movq "); Wr(xto); Wr(",%rax\n");
     Wr("  movq "); Wr(to); Wr(",%rax\n");
     Wr("  movq %rax,%xmm9\n");
@@ -51,10 +51,10 @@ func AsmOp2Real(opcode string, xto string,xfrom string) {
   Wr("# asmOp2Real "); Wr(opcode); Wr(" ");  Wr(xfrom); Wr(","); Wr(xto);  Wr("\n");
   var dt = TypeOfLiteral(xfrom);
   if (dt == DTYPE_NUM) || (dt == DTYPE_REAL) {
-     var dl uint64 = 0;
+     var dl string;
      if dt == DTYPE_NUM  { dl = ValNum(xfrom); }
      if dt == DTYPE_REAL { dl = ValReal(xfrom); }
-     from = fmt.Sprintf("$%ld",dl);
+     from = fmt.Sprintf("$%s",dl);
      Wr("# movq "); Wr(xfrom); Wr(",%rax\n"); Wr("  movq "); Wr(from); Wr(",%rax\n");
      Wr("  movq %rax,%xmm8\n"); 
   } else {
@@ -65,10 +65,10 @@ func AsmOp2Real(opcode string, xto string,xfrom string) {
   };
   dt = TypeOfLiteral(xto);
   if (dt == DTYPE_NUM) || (dt == DTYPE_REAL) {
-    var dl uint64 = 0;
+    var dl string;
     if dt == DTYPE_NUM  { dl = ValReal(xto); }
     if dt == DTYPE_REAL { dl = ValReal(xto); }
-    to = fmt.Sprintf("$%ld",dl); 
+    to = fmt.Sprintf("$%s",dl); 
     Wr("# movq "); Wr(xto); Wr(",%rax\n");
     Wr("  movq "); Wr(to); Wr(",%rax\n");
     Wr("  movq %rax,%xmm9\n");

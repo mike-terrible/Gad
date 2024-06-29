@@ -27,16 +27,17 @@ type Var struct {
 var NVar int = 0
 var Vars [256]Var
 
-func ValReal(a string) uint64 {
+func ValReal(a string) string {
   var d float64;
   d,_  = strconv.ParseFloat(a,64);
-  return math.Float64bits(d);
+  var u = math.Float64bits(d);
+  return strconv.FormatUint(u,10);
 }
 
-func ValNum(a string) uint64 {
+func ValNum(a string) string {
   var d uint64;
   d,_ = strconv.ParseUint(a,10,64);
-  return d;
+  return strconv.FormatUint(d,10);
 }
 
 func TypeOfLiteral(t string) int {

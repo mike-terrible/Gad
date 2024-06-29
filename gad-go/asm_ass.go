@@ -12,18 +12,14 @@ func AsmAss(xto string ,xfrom string) {
   Wr("# asmAss ", xfrom,",", xto, "\n");
   var from string; var to string;
   var dt = TypeOfLiteral(xfrom);
-  var dl uint64 = 0;
   switch(dt) {
   case DTYPE_REAL: {
-    dl = ValReal(xfrom);
-    from = fmt.Sprintf("$%ld",dl);
+    from = ValReal(xfrom);
     Wr("# movq ", xfrom, ",%rsi\n",
-       "  movq ", from, ",%rsi\n");
+       "  movq $", from, ",%rsi\n");
   }
   case DTYPE_NUM: {
-    //dl = ValNum(xfrom);
-    //from = fmt.Sprintf("%d",dl);
-    from = xfrom;
+    from = ValNum(xfrom);
     Wr("# movq ", xfrom, ",%rsi\n",
        "  movq $", from, ",%rsi\n"); 
   }
