@@ -13,12 +13,23 @@ var Thens [256]bool;
 var Loops [256]bool;
 var Elses [256]bool;
 
-var Op = " + add - sub * mul / div % mod < lt > gt <= le >= ge != ne <- to == eq ";
+var Op = " + add - sub * mul / div % mod < lt > gt <= le >= ge != ne <- -> to == eq ";
 
 var St [256]string;
 
 var Zj int = 0
 var Result string = "";
+
+func Pri(op string) int {
+  switch op {
+  case "<","lt",">","gt","<=","le",">=","ge","!=","ne","==","eq": return 4;
+  case "*","mul", "div","%","mod": return 3;
+  case "+","add","-","sub": return 2;
+  case "<-","to", "->" : return 1;
+  };
+  return 0;
+}
+
 
 func AsmAllocResult() {
   Result = fmt.Sprintf("gad_%d",Zj);
@@ -67,11 +78,11 @@ func goOp1(xop string,nt int) int {
 
 func goAss(nt int) int {
   fmt.Printf(" goAss (%d) %s = %s\n",nt,St[nt-1],St[nt-2]);
-  var xn2 = St[nt-1];
-  var xn1 = St[nt-2]; 
+  var /*xn2*/ xn1 = St[nt-1];
+  var /*xn1*/ xn2 = St[nt-2]; 
   if Mode == ASM { AsmAss(xn2,xn1);  return nt-2; }
   To(GetIdent());
-  Wr(St[nt-1]); Wr(" = "); Wr(St[nt-2]);
+  Wr(xn2); Wr(" = "); Wr(xn1);
   eoi();
   return nt-2;
 }
@@ -79,16 +90,16 @@ func goAss(nt int) int {
 func goOp2(xop string,nt int) int { 
   if Mode == ASM {
     var top = nt;
-    var xn2 = "$0";  if (nt - 1) >= 0 { xn2 = St[nt - 1]; top = nt - 1; };
-    var xn1 = "$0";  if (nt - 2) >= 0 { xn1 = St[nt - 2]; top = nt - 2; };
+    var /*xn2*/ xn1 = "$0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt - 1; };
+    var /*xn1*/ xn2 = "$0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt - 2; };
     AsmAllocResult(); 
     St[top] = Result; top += 1;
     AsmOp2(xop,xn2,xn1); 
     return top; 
   };
   var top = nt;
-  var xn2 = "0";  if (nt - 1) >= 0 { xn2 = St[nt - 1]; top = nt -1; }; 
-  var xn1 = "0";  if (nt - 2) >= 0 { xn1 = St[nt - 2]; top = nt -2; };
+  var /*xn2*/ xn1 = "0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt -1; }; 
+  var /*xn1*/ xn2 = "0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt -2; };
   AllocResult();
   St[top] = Result; top += 1;
   To(GetIdent()); 
@@ -162,37 +173,47 @@ func FromEvil(varName string, iStart int, nv int, p [256]string) {
   var npp int = 0;
   var pp  [256]string;
   var ops [256]string;
-  var aa  [256]string;
   var cop int = 0; 
-  var carg int = 0;
   var i int = iStart;
   for { i += 1; if i>=nv { break; }
     var t string =  p[i];
-    if t == ")" {
-      if cop>0 { cop -= 1;
-        var xop = ops[cop];
-        if isOp(xop) {
-          var a1 = ""; var a2 = "";
-          if carg > 0 {
-            carg -= 1;  a1 = aa[carg]; 
-            if a1 != "(" { pp[npp] = a1; npp += 1; };
-          };
-          if carg > 0 {
-            carg -= 1; a2 = aa[carg]; 
-            if(a2 != "(") { pp[npp] = a2; npp += 1; };
-          };
-          pp[npp] = xop; npp += 1;
-        };
+    switch {
+    case isOp(t): {
+      var prt = Pri(t);
+      for cop > 0 {
+        cop -= 1;
+        var py = Pri(ops[cop]);
+        if py < prt { cop += 1; break; };
+        pp[npp] = ops[cop]; npp += 1; 
       };
-      continue;
-    };
-    if isOp(t) { ops[cop] = t; cop += 1; } else {
-      aa[carg] = t; carg += 1;
+      ops[cop] = t; cop ++;
+    }
+    case t == "(": {
+      ops[cop] = t; cop += 1;
+    }
+    case t == ")": {
+      for cop > 0 {
+        cop -= 1
+        if ops[cop] == "(" { break; };
+        pp[npp] = ops[cop]; npp++;
+      };
+    }
+    default: {
+      pp[npp] = t; npp += 1;
+    }
     };
   }; // for
-  if npp>0 { Calc(varName,-1,npp,pp); }
+  if npp>0 { 
+    var za strings.Builder;
+    var i = 0
+    for i < npp {
+      za.WriteString(" "); za.WriteString(pp[i]);
+      i += 1;
+    }
+    GenComment(za.String());
+    Calc(varName,-1,npp,pp); 
+  }
 }
-
 
 func Calc(varName string, start int, nv int, p [256]string ) {
   FromCalc(varName, start, nv, p);
