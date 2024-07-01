@@ -6,7 +6,7 @@ package main
 import "fmt"
 import "strings"
 
-func GenDeclare(nv int, p [256]string)  {
+func GenDeclare(nv int, p *Seq)  {
   var i int = 0;
   var varV string = ""; 
   var vtype string = "";
@@ -14,29 +14,29 @@ func GenDeclare(nv int, p [256]string)  {
   var vsize string = "";
   var like string = "";
   var be string = "";
-  i += 1; if i < nv { varV =  p[i]; };
+  i += 1; if i < nv { varV =  (*p)[i]; };
   i += 1; 
-  if i < nv { like = p[i];  
+  if i < nv { like = (*p)[i];  
     if Cmp(like,ARRAY) { 
-      i += 1; if i < nv { vsize = p[i]; };
-      i += 1; if i < nv { vtype = p[i]; }; 
-      i +=1;  if i < nv { be = p[i]; };
+      i += 1; if i < nv { vsize = (*p)[i]; };
+      i += 1; if i < nv { vtype = (*p)[i]; }; 
+      i +=1;  if i < nv { be = (*p)[i]; };
       goArray(nv,p, varV, vsize, vtype, be ); 
       return;
     };
   };
-  i += 1; if i < nv { vtype = p[i] };
+  i += 1; if i < nv { vtype = (*p)[i] };
   i += 1; if i < nv { /* be = p[i]; */};
-  i += 1; if i< nv { val = p[i]; };
+  i += 1; if i< nv { val = (*p)[i]; };
   goVar(varV, vtype, val);
 }
 
-func GenWith(nv int, p [256]string) {
+func GenWith(nv int, p *Seq) {
   var i = 0; var t = ""; var buf = ""; 
   for {
     i += 1; 
     if i >=nv { break; }
-    t = p[i];
+    t = (*p)[i];
     switch(Mode) {
     case GO, RUST:
     { To(GetIdent()); Wr(CurVar);
@@ -58,7 +58,7 @@ func GenWith(nv int, p [256]string) {
   };
 }
 
-func goArray(nv int, p [256]string, varV string, vsize string, vtype string, be string) {
+func goArray(nv int, p *Seq, varV string, vsize string, vtype string, be string) {
   if len(varV) == 0 { return; }; To(GetIdent());
   switch Mode {
   case GO: {

@@ -3,11 +3,11 @@
 //
 package main
 
-func GenRun(nv int, p [256]string )  {
+func GenRun(nv int, p *Seq )  {
   var i = 0; 
   InProc = true;
   i += 1; if i >= nv { return; };
-  var xmain = p[i]; 
+  var xmain = (*p)[i]; 
   i += 1; if i >= nv { return; };
   To(GetIdent());
   switch Mode {

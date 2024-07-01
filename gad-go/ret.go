@@ -3,7 +3,7 @@ package main
 import "strings"
 
 
-func GenReturn( nv int,p [256]string ) {
+func GenReturn( nv int,p *Seq ) {
   var i = 0; 
   //
   i += 1;
@@ -12,7 +12,7 @@ func GenReturn( nv int,p [256]string ) {
     Wr("\n");
     return;
   };
-  var t = p[i]; To(GetIdent()); Wr("return "); 
+  var t = (*p)[i]; To(GetIdent()); Wr("return "); 
   Wr(t); 
   if strings.HasPrefix(t,"\"") {
     Wr("\"");

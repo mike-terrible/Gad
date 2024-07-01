@@ -5,10 +5,10 @@ package main
 
 import "strings"
 
-func GenMess(nv int, p [256]string)  {
+func GenMess(nv int, p *Seq)  {
   To(GetIdent());
   var i = 0; i += 1; if i >= nv { return; };
-  var t = p[i];
+  var t = (*p)[i];
   switch Mode {
   case ASM: { AsmMess(t); return; }
   case RUST: {

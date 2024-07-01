@@ -8,14 +8,14 @@ import "strings"
 var EvId = 0;
 var Nev = 0;
 
-var Evals [256]int;
-var Thens [256]bool;
-var Loops [256]bool;
-var Elses [256]bool;
+var Evals []int = make([]int,256);
+var Thens []bool = make([]bool,256);
+var Loops []bool = make([]bool,256); 
+var Elses []bool = make([]bool,256);
 
-var Op = " + add - sub * mul / div % mod < lt > gt <= le >= ge != ne <- -> to == eq ";
+var Op = " + add - sub * mul / div % mod < lt > gt <= le >= ge != ne <- -> = to == eq ";
 
-var St [256]string;
+var St []string = make([]string,256);
 
 var Zj int = 0
 var Result string = "";
@@ -44,8 +44,7 @@ func AllocResult() string {
 }
 
 func isOp(t string) bool {
-  if strings.Contains(Op," " + t + " ") { return true; }
-  return false;
+  return strings.Contains(Op," " + t + " ");
 }
 
 func eoi() {
@@ -59,7 +58,9 @@ func goOp1(xop string,nt int) int {
   if Mode == ASM { 
     var top = nt - 1;
     var xn1 = St[top];
-    AsmAllocResult(); St[top] = Result; top += 1; AsmOp1(xop,xn1); 
+    AsmAllocResult(); 
+    St[top] = Result;
+    top += 1; AsmOp1(xop,xn1); 
     return top; 
   }
   var top = nt - 1;
@@ -169,14 +170,14 @@ func InitRepeat() {
   }}
 }
 
-func FromEvil(varName string, iStart int, nv int, p [256]string) {
+func FromEvil(varName string, iStart int, nv int, p *Seq) {
   var npp int = 0;
-  var pp  [256]string;
-  var ops [256]string;
+  var pp  Seq;
+  var ops Seq;
   var cop int = 0; 
   var i int = iStart;
   for { i += 1; if i>=nv { break; }
-    var t string =  p[i];
+    var t string =  (*p)[i];
     switch {
     case isOp(t): {
       var prt = Pri(t);
@@ -184,22 +185,22 @@ func FromEvil(varName string, iStart int, nv int, p [256]string) {
         cop -= 1;
         var py = Pri(ops[cop]);
         if py < prt { cop += 1; break; };
-        pp[npp] = ops[cop]; npp += 1; 
+        pp = append(pp, ops[cop]); npp += 1; 
       };
-      ops[cop] = t; cop ++;
+      ops = append( ops, t ); cop ++;
     }
     case t == "(": {
-      ops[cop] = t; cop += 1;
+      ops = append( ops, t ); cop += 1;
     }
     case t == ")": {
       for cop > 0 {
         cop -= 1
         if ops[cop] == "(" { break; };
-        pp[npp] = ops[cop]; npp++;
+        pp = append(pp, ops[cop]); npp++;
       };
     }
     default: {
-      pp[npp] = t; npp += 1;
+      pp = append(pp, t); npp += 1;
     }
     };
   }; // for
@@ -211,14 +212,16 @@ func FromEvil(varName string, iStart int, nv int, p [256]string) {
       i += 1;
     }
     GenComment(za.String());
-    Calc(varName,-1,npp,pp); 
+    FromCalc(varName,-1,npp,&pp); 
   }
 }
 
-func Calc(varName string, start int, nv int, p [256]string ) {
-  FromCalc(varName, start, nv, p);
+/*
+func Calc(varName string, start int, nv int, p Seq ) {
+  FromCalc(varName, start, nv, &p);
   return;
 }
+*/
 
 /********************************************************/
 
@@ -323,19 +326,19 @@ func MojoElse() {
 
 /********************************************************/
 
-func FromCalc(varName string, iStart int,nv int, p [256]string) int {
+func FromCalc(varName string, iStart int,nv int, p *Seq) int {
   DbgTrace("FromCalc");
   var i = iStart;
   var top = 0;
   for { i += 1; if i >= nv { break; } 
-    var t = p[i]; 
+    var t = (*p)[i]; 
     if t == "(" {  
       FromEvil(varName, i, nv, p); return 0;
     };
     var is_op = isOp(t);
     if is_op {
       switch(t) { 
-      case "<-","to": top = goAss(top); 
+      case "<-","to","->","=": top = goAss(top); 
       case "inc","++": top = goOp1(" + 1",top);
       case "<=","le":  top = goOp2(" <= ", top);
       case "<","lt":   top = goOp2(" < ",top); 
@@ -363,13 +366,14 @@ func FromCalc(varName string, iStart int,nv int, p [256]string) int {
   return 0;
 }
 
-func GenEval(nv int, p [256]string) {
+func GenEval(nv int, p *Seq) {
   DbgTrace("Eval(");
-  var pu [256]string; var i int; var j int;
+  var pu Seq = make([]string,0) 
+  var i int; var j int;
   j = 0; i = 0;
   for {
     i += 1; if i >= nv { break; }
-    var cc = p[i];
+    var cc = (*p)[i];
     if Cmp(cc , REPEAT ) {
       EvId += 1;
       Evals[Nev] = EvId; 
@@ -377,7 +381,7 @@ func GenEval(nv int, p [256]string) {
       Elses[Nev] = false;     
       Nev += 1;
       InitRepeat();
-      FromCalc("?",-1, j, pu);
+      FromCalc("?",-1, j, &pu);
       GenRepeat();
       DbgTrace(")Eval");
       return;
@@ -385,13 +389,13 @@ func GenEval(nv int, p [256]string) {
     if Cmp(cc , THEN ) {
       EvId += 1;
       Evals[Nev] = EvId; Nev += 1;
-      FromCalc("?", -1, j, pu);
+      FromCalc("?", -1, j, &pu);
       genThen();
       DbgTrace(")Eval");
       return;
     };
-    pu[j] = cc; j += 1;
+    pu = append(pu, cc); j += 1;
   };
-  if j > 0 { FromCalc("?",-1,j,pu); };
+  if j > 0 { FromCalc("?",-1,j,&pu); };
   DbgTrace(")Eval");
 }

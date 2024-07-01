@@ -8,6 +8,8 @@ import "bufio"
 import "fmt"
 import "strings"
 
+type Seq []string
+
 var Mode string = GO;
 var Out *bufio.Writer;
 var ident int = 0;
@@ -70,29 +72,29 @@ func Parser(fn string, mode string) {
     switch {
     case Cmp(s,LOOP): GenLoop();
     case Cmp(s,DONE): GenDone(); 
-    case Cmp(s,RETURN): GenReturn(nv,pt);
+    case Cmp(s,RETURN): GenReturn(nv,&pt);
     case Cmp(s,WHEN): {
       Wr("\n");
       DbgTrace("<WHEN>");
-      GenEval(nv,pt);
+      GenEval(nv,&pt);
     }
-    case Cmp(s,SIC): GenSic(nv,pt);  
+    case Cmp(s,SIC): GenSic(nv,&pt);  
     case Cmp(s,ELSE): GenElse();
-    case Cmp(s,IF): GenEval(nv,pt);
-    case Cmp(s,GIVE): GenGive(nv,pt);
-    case Cmp(s,JOB): GenJob(nv,pt); 
-    case Cmp(s,SHOW): GenShow(nv, pt);
-    case Cmp(s,MESS): GenMess(nv, pt);
-    case Cmp(s,RUN): GenRun(nv, pt);
+    case Cmp(s,IF): GenEval(nv,&pt);
+    case Cmp(s,GIVE): GenGive(nv,&pt);
+    case Cmp(s,JOB): GenJob(nv,&pt); 
+    case Cmp(s,SHOW): GenShow(nv,&pt);
+    case Cmp(s,MESS): GenMess(nv, &pt);
+    case Cmp(s,RUN): GenRun(nv, &pt);
     case Cmp(s,AMEN): GenAmen();
-    case Cmp(s,DECLARE): GenDeclare(nv, pt); 
-    case Cmp(s,WITH): GenWith(nv , pt);
-    case Cmp(s,IS): GenIs(nv, pt); 
-    case Cmp(s,PROC): GenProc(nv , pt); 
+    case Cmp(s,DECLARE): GenDeclare(nv, &pt); 
+    case Cmp(s,WITH): GenWith(nv , &pt);
+    case Cmp(s,IS): GenIs(nv, &pt); 
+    case Cmp(s,PROC): GenProc(nv , &pt); 
     case Cmp(s,INIT): GenInit(); 
-    case Cmp(s,ALIAS): GenAlias(nv, pt);
-    case Cmp(s,EVAL): GenEval(nv,pt);
-    default: GadError(s, pt, nv); 
+    case Cmp(s,ALIAS): GenAlias(nv, &pt);
+    case Cmp(s,EVAL): GenEval(nv,&pt);
+    default: GadError(s, &pt, nv); 
     };
   };
   if NeedBoolOf {

@@ -25,7 +25,7 @@ type Var struct {
 }
 
 var NVar int = 0
-var Vars [256]Var
+var Vars []Var = make([]Var,0)
 
 func ValReal(a string) string {
   var d float64;
@@ -69,9 +69,10 @@ func VarGet(xn string) *Var {
 
 
 func VarNew(xn string, isA bool,asize int, xtype int) *Var {
+  var nvar Var;
   var i int = NVar; 
   NVar += 1;
-  if NVar>255 { return nil; }
+  Vars = append( Vars, nvar )
   Vars[i].xname = xn;
   Vars[i].isArray = isA;
   Vars[i].asize = asize;

@@ -3,9 +3,9 @@
 //
 package main
 
-func AsmGenIs(nv int, p [256]string ) { }
+func AsmGenIs(nv int, p *Seq ) { }
 
-func GenIs(nv int, p [256]string ) {
+func GenIs(nv int, p *Seq ) {
   switch Mode {
   case ASM: { AsmGenIs(nv,p); return; }
   case GO,RUST: { Wr("{\n"); }

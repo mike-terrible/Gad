@@ -6,9 +6,9 @@ package main
 //import "fmt"
 import "strings"
 
-func Lexer(pp string) ( ret [256]string , nret int  ) {
+func Lexer(pp string) ( ret Seq , nret int  ) {
   var baby string = pp;
-  ret[0]=""
+  ret = make([]string,0)
   var n = len(baby);
   var i = 0;
   var buf string = "";
@@ -35,7 +35,9 @@ func Lexer(pp string) ( ret [256]string , nret int  ) {
       };
       if len(buf) > 0 {
         blank = false;
-        ret[nret] = buf; nret += 1; buf = "";
+        ret = append(ret,buf)
+        nret += 1; 
+        buf = "";
       };
       i += 1; 
       continue;
@@ -43,7 +45,7 @@ func Lexer(pp string) ( ret [256]string , nret int  ) {
     buf = strings.Join([]string{ buf ,a },"");
     i += 1;
   };
-  if len(buf) > 0 { ret[nret] = buf; nret += 1; };
+  if len(buf) > 0 { ret  = append (ret, buf); nret += 1; };
   // output 
   i = 0
   var ok bool

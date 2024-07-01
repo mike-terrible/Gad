@@ -7,14 +7,14 @@ package main
 import "strings"
 
 
-func GenSic(nv int, p [256]string )  {
+func GenSic(nv int, p *Seq )  {
   To(GetIdent()); var i = 0; 
   for { i += 1;
     if i >= nv {
       if Mode == "-rust" { Wr(";"); };
       Wr("\n"); return;
     };
-    var t = p[i];
+    var t = (*p)[i];
     Wr(t);
     if strings.HasPrefix(t,"\"") { Wr("\""); }; 
     Wr(" ");

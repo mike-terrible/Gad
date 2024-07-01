@@ -3,7 +3,7 @@ package main
 
 import "fmt"
 
-func GadError(s string , p [256]string, nv int) {
+func GadError(s string , p *Seq, nv int) {
   fmt.Printf("!!!word: %s\n",s);
 }
 

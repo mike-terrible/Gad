@@ -5,20 +5,20 @@ package main
 
 import "strings"
 
-func AsmGenJob(nv int, p [256]string ) {
+func AsmGenJob(nv int, p *Seq ) {
 
 }
 
-func GenJob(nv int, p [256]string ) {
+func GenJob(nv int, p *Seq ) {
   if Mode == ASM { AsmGenJob(nv, p ); return; }
   var i = 0;
   i += 1; if i >= nv { return; };
-  var t = p[i];
+  var t = (*p)[i];
   To(GetIdent()); Wr(t, "(");
   var np = 0; 
-  for { i += 1; if i >= nv { break; }; t = p[i];
+  for { i += 1; if i >= nv { break; }; t = (*p)[i];
     if Cmp(t,WITH) { i += 1; if i >= nv { break; }; 
-      t = p[i]; np += 1; if np > 1 { Wr(","); };
+      t = (*p)[i]; np += 1; if np > 1 { Wr(","); };
       Wr(t);
       if strings.HasPrefix(t,"\"") { Wr("\""); };
     }; 
