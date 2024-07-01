@@ -8,22 +8,6 @@ import "strconv"
 //import "unsafe"
 import "math"
 
-const (
-  DTYPE_UNDEF = iota 
-  DTYPE_LIGHT = iota
-  DTYPE_NUM = iota
-  DTYPE_REAL = iota
-  DTYPE_STRING = iota
-)
-
-type Var struct {
-  xname string; 
-  pname string;
-  isArray bool; 
-  asize int; 
-  dtype int;
-}
-
 var NVar int = 0
 var Vars []Var = make([]Var,0)
 

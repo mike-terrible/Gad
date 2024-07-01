@@ -8,8 +8,6 @@ import "bufio"
 import "fmt"
 import "strings"
 
-type Seq []string
-
 var Mode string = GO;
 var Out *bufio.Writer;
 var ident int = 0;

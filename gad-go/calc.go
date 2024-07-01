@@ -8,14 +8,14 @@ import "strings"
 var EvId = 0;
 var Nev = 0;
 
-var Evals []int = make([]int,256);
-var Thens []bool = make([]bool,256);
-var Loops []bool = make([]bool,256); 
-var Elses []bool = make([]bool,256);
+var Evals []int = make([]int,255);
+var Thens []bool = make([]bool,255);
+var Loops []bool = make([]bool,255); 
+var Elses []bool = make([]bool,255);
 
 var Op = " + add - sub * mul / div % mod < lt > gt <= le >= ge != ne <- -> = to == eq ";
 
-var St []string = make([]string,256);
+var St []string = make([]string,255);
 
 var Zj int = 0
 var Result string = "";
@@ -63,16 +63,16 @@ func goOp1(xop string,nt int) int {
     top += 1; AsmOp1(xop,xn1); 
     return top; 
   }
-  var top = nt - 1;
+  var top = nt - 1; 
   var xn1 = St[top];
   AllocResult();
   St[top] = Result; top += 1;
   To(GetIdent()); 
   switch Mode { 
-  case GO,MOJO: { Wr("var "); } 
-  case RUST: { Wr("let mut "); }  
+  case GO,MOJO: Wr("var "); 
+  case RUST: Wr("let mut ");  
   }
-  Wr(Result); Wr(" = "); Wr(xn1); Wr(xop);
+  Wr(Result, " = ", xn1, xop );
   eoi();
   return top;
 }
@@ -94,7 +94,7 @@ func goOp2(xop string,nt int) int {
     var /*xn2*/ xn1 = "$0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt - 1; };
     var /*xn1*/ xn2 = "$0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt - 2; };
     AsmAllocResult(); 
-    St[top] = Result; top += 1;
+    St[top] = Result; top += 1; 
     AsmOp2(xop,xn2,xn1); 
     return top; 
   };
@@ -216,12 +216,6 @@ func FromEvil(varName string, iStart int, nv int, p *Seq) {
   }
 }
 
-/*
-func Calc(varName string, start int, nv int, p Seq ) {
-  FromCalc(varName, start, nv, &p);
-  return;
-}
-*/
 
 /********************************************************/
 
@@ -274,21 +268,22 @@ func MojoThen() { PythonThen(); }
 /********************************************************/
 
 func AsmDone() {
-  var cur = Nev - 1
-  Wr("\n");
-  if !Elses[cur]  {
-    Wr("else"); Wr(fmt.Sprintf("%d",Evals[Nev - 1]) ); Wr(": nop\n");
-  };
-  Wr("done"); Wr(fmt.Sprintf("%d",Evals[Nev -1]) ); Wr(": nop\n"); 
-  Nev -= 1;
+   var cur = Nev - 1;
+   Wr("\n");
+   if !Elses[cur]  {
+      Wr("else"); Wr(fmt.Sprintf("%d",Evals[Nev - 1]) ); Wr(": nop\n");
+   };
+   Wr("done"); Wr(fmt.Sprintf("%d",Evals[Nev -1]) ); Wr(": nop\n"); 
+   Nev -= 1;
 }
 
 func AsmLoop() {
-  Wr("\n");
   var z = fmt.Sprintf("%d",Evals[Nev-1]);
+  Wr("\n","# loop ev",z,"\n");
   Wr("  jmp ev"); Wr(z); Wr("\n"); 
   Wr("leave_"); Wr(z); Wr(": nop\n");
   Nev -= 1;
+
 }
 
 func AsmElse() { 
@@ -388,7 +383,10 @@ func GenEval(nv int, p *Seq) {
     };
     if Cmp(cc , THEN ) {
       EvId += 1;
-      Evals[Nev] = EvId; Nev += 1;
+      Evals[Nev] = EvId;
+      Loops[Nev] = false;
+      Elses[Nev] = false;
+      Nev += 1;
       FromCalc("?", -1, j, &pu);
       genThen();
       DbgTrace(")Eval");

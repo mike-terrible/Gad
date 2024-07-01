@@ -3,6 +3,9 @@
 //
 package main
 
+func EvClear() {
+}
+
 func GenInit() {
   Wr("\n")
   InArray = false;
@@ -19,14 +22,17 @@ func GoLoop() {
 
 func GenLoop() {
   DbgTrace("GenLoop");
-  if Mode == ASM { AsmLoop(); return; };
+  if Mode == ASM { 
+    if Nev > 0 { AsmLoop(); }; 
+    return; 
+  };
   SetIdent(GetIdent() - 2); To(GetIdent());
   switch Mode {
   case RUST: RustLoop();
   case GO:   GoLoop();
   case MOJO: MojoLoop();
   case PYTHON: PyLoop();
-  }
+  };
 }
 
 func GenDone() { 
@@ -36,11 +42,15 @@ func GenDone() {
 
 func AsmAmen() {
   InProc = false;
-  Wr("  pop %rax\n"); Wr("  ret\n");
+  Wr("# amen ",CurProc,"\n");
+  Wr("  pop %rax\n","  ret\n");
 }
 
 func GenAmen() {
-  if Mode == ASM { AsmAmen(); return; }
+  if Mode == ASM { 
+    AsmAmen(); 
+    return; 
+  }
   InProc = false; 
   To(GetIdent() - 2);
   switch Mode {

@@ -18,4 +18,26 @@ run hi as
   mess "\n"  
 amen  
   
+2024-07-02 - правильно транслирует вложеные операторы цикла.  
+  
+(*  
+  ass-while1.гад  
+*)  
+run hi as  
+  dcl a as num  
+  dcl b as num  
+  evil ( a to 0 )  
+  while ( a < 3 ) repeat  
+    evil ( a to ( a + 1 ) )  
+    show with "  a < 4 " with a with "\n"  
+    evil ( b to 0 )  
+    while ( b < 2 ) repeat  
+      evil ( b = b + 1 )  
+      show with "    b < 3 " with b with "\n"  
+    loop  
+  loop   
+  mess "\ndone\n"  
+amen  
+  
+
 
