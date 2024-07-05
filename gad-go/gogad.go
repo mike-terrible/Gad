@@ -11,6 +11,7 @@ const RUST = "-rust";
 const MOJO = "-mojo";
 const PYTHON = "-python";
 const ASM = "-asm";
+const ASM32 = "-asm32";
 var NeedBoolOf = false;
 
 func main() {
@@ -22,6 +23,6 @@ func main() {
   if n > 1 { fn = os.Args[1]; }
   if n > 2 { mode = os.Args[2]; }
   if n > 1 { Parser(fn,mode); return; }
-  fmt.Println("USAGE: gad fname [-go | -rust | -mojo | -python | -asm ]")
+  fmt.Println("USAGE: gad fname [-go | -rust | -mojo | -python | -asm | -asm32 ]")
 }
 

@@ -20,9 +20,7 @@ func CheckComment(a string) {
 
 func GenComment(a string) {
  if !IsLine { return; };
- if Mode == ASM {
-   Wr("\n","# ", a, "\n");
- };
+ if (Mode == ASM) || (Mode == ASM32) { Wr("\n","# ", a, "\n"); return; };
  To(GetIdent());
  switch Mode {
  case RUST,GO : Wr("// ", a ,  "\n" ); 

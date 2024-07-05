@@ -8,17 +8,17 @@ func GenReturn( nv int,p *Seq ) {
   //
   i += 1;
   if i == nv { To(GetIdent()); Wr("return");
-    if Mode == "-rust" { Wr(";"); };
+    if Mode == RUST { Wr(";"); };
     Wr("\n");
     return;
   };
-  var t = (*p)[i]; To(GetIdent()); Wr("return "); 
-  Wr(t); 
+  var t = (*p)[i]; To(GetIdent()); 
+  Wr("return ",t); 
   if strings.HasPrefix(t,"\"") {
     Wr("\"");
-    if Mode == "-rust" { Wr(".to_string()"); };
+    if Mode == RUST { Wr(".to_string()"); };
   };  
-  if Mode == "-rust" { Wr(";"); };
+  if Mode == RUST { Wr(";"); };
   Wr("\n"); 
 } 
 

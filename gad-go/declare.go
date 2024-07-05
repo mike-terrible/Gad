@@ -131,7 +131,9 @@ func goArray(nv int, p *Seq, varV string, vsize string, vtype string, be string)
 
 func goVar(varV string, vtype string, val string )  {
   if len(varV) == 0 { return; };
-  if Mode == ASM { AsmGoVar(varV,vtype,val);  return; }
+  switch Mode {
+  case ASM,ASM32: { AsmGoVar(varV,vtype,val);  return; }
+  };
   To(GetIdent());
   switch Mode {
   case  GO,MOJO: Wr("var ",varV);

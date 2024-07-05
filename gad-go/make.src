@@ -1,2 +1,2 @@
-go build -compiler gccgo -gccgoflags '-msse3 -O3 -s'
+go build -compiler gccgo -gccgoflags '-O3 -s'
 

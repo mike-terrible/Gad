@@ -3,13 +3,14 @@
 //
 package main
 
-func AsmGenIs(nv int, p *Seq ) { }
+func Asm32Is(nv int, p *Seq ) { }
+func AsmIs(nv int, p *Seq ) { }
 
 func GenIs(nv int, p *Seq ) {
   switch Mode {
-  case ASM: { AsmGenIs(nv,p); return; }
-  case GO,RUST: { Wr("{\n"); }
+  case ASM32: Asm32Is(nv,p);
+  case ASM: AsmIs(nv,p); 
+  case GO,RUST: { Wr("{\n"); SetIdent(GetIdent() + 2); }
   };
-  SetIdent(GetIdent() + 2);
 }
 

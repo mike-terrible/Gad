@@ -5,11 +5,16 @@ package main
 
 import "strings"
 
+func Asm32GenJob(nv int, p *Seq ) {
+
+}
+
 func AsmGenJob(nv int, p *Seq ) {
 
 }
 
 func GenJob(nv int, p *Seq ) {
+  if Mode == ASM32 { Asm32GenJob(nv, p ); return; }
   if Mode == ASM { AsmGenJob(nv, p ); return; }
   var i = 0;
   i += 1; if i >= nv { return; };

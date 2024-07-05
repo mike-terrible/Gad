@@ -15,6 +15,12 @@ func GenRun(nv int, p *Seq )  {
   case GO:   Wr("func main() {"); 
   case MOJO: Wr("fn main() :\n"); 
   case PYTHON: Wr("def main() :\n"); 
+  case ASM32: {
+    Wr("main: push %eax\n",
+       xmain,": xor %eax,%eax\n");
+    CurProc = xmain;
+    return;
+  }
   case ASM: {
     Wr("main: push %rax\n",
        xmain,": xor %rax,%rax\n");

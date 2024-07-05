@@ -12,6 +12,7 @@ func GenShow(nv int, p *Seq )  {
        i += 1; if i >= nv { break; }; 
        t = (*p)[i]; 
        switch Mode {
+       case ASM32: Asm32Show(t);
        case ASM: AsmShow(t);
        case RUST: {
          To(GetIdent()); Wr("print!(\"{ } \",", t); 

@@ -8,6 +8,7 @@ import (
   "strings"
 )
 
+
 func AsmAss(xto string ,xfrom string) {
   Wr("# asmAss ", xfrom,",", xto, "\n");
   var from string; var to string;

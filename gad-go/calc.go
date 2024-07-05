@@ -81,15 +81,28 @@ func goAss(nt int) int {
   fmt.Printf(" goAss (%d) %s = %s\n",nt,St[nt-1],St[nt-2]);
   var /*xn2*/ xn1 = St[nt-1];
   var /*xn1*/ xn2 = St[nt-2]; 
-  if Mode == ASM { AsmAss(xn2,xn1);  return nt-2; }
+  switch Mode { 
+  case ASM32: { Asm32Ass(xn2,xn1); return nt-2; };
+  case ASM: { AsmAss(xn2,xn1);  return nt-2; }
+  };
   To(GetIdent());
   Wr(xn2); Wr(" = "); Wr(xn1);
   eoi();
   return nt-2;
 }
 
-func goOp2(xop string,nt int) int { 
-  if Mode == ASM {
+func goOp2(xop string,nt int) int {
+  switch Mode { 
+  case ASM32: {
+    var top = nt;
+    var /*xn2*/ xn1 = "$0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt - 1; };
+    var /*xn1*/ xn2 = "$0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt - 2; };
+    AsmAllocResult(); 
+    St[top] = Result; top += 1; 
+    Asm32Op2(xop,xn2,xn1); 
+    return top;
+  }
+  case ASM: {
     var top = nt;
     var /*xn2*/ xn1 = "$0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt - 1; };
     var /*xn1*/ xn2 = "$0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt - 2; };
@@ -97,7 +110,7 @@ func goOp2(xop string,nt int) int {
     St[top] = Result; top += 1; 
     AsmOp2(xop,xn2,xn1); 
     return top; 
-  };
+  }};
   var top = nt;
   var /*xn2*/ xn1 = "0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt -1; }; 
   var /*xn1*/ xn2 = "0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt -2; };
@@ -105,9 +118,8 @@ func goOp2(xop string,nt int) int {
   St[top] = Result; top += 1;
   To(GetIdent()); 
   switch Mode { 
-  case GO,MOJO: { Wr("var "); } 
-  case RUST: { Wr("let mut "); }  
-  }
+  case GO,MOJO: Wr("var "); case RUST: Wr("let mut ");  
+  };
   if strings.Contains(" == ; != ; > ; < ; >= ; <= ",xop) {
     NeedBoolOf = true;
     Wr(Result); Wr(" = ");
@@ -126,6 +138,7 @@ func goOp2(xop string,nt int) int {
 
 func genThen() {
   switch Mode {
+  case ASM32: Asm32Then();
   case ASM: AsmThen();
   case GO: GoThen();
   case RUST: RustThen();
@@ -138,6 +151,7 @@ func genRepeat() {
   Loops[Nev - 1] = true;
   Elses[Nev - 1] = false;
   switch Mode {
+  case ASM32: Asm32Repeat();
   case ASM: AsmRepeat();
   case GO:  GoRepeat();
   case RUST: RustRepeat();
@@ -148,7 +162,7 @@ func genRepeat() {
 
 func InitRepeat() {
   switch Mode {
-  case ASM: {
+  case ASM32,ASM: {
     Wr("\n");
     var zp = fmt.Sprintf("ev%d:\n",Evals[ Nev - 1]);
     Wr(zp);   
@@ -219,6 +233,14 @@ func FromEvil(varName string, iStart int, nv int, p *Seq) {
 
 /********************************************************/
 
+func Asm32Repeat() {
+  var zz = fmt.Sprintf("leave_%d\n",Evals[Nev - 1])
+  Wr("  lea ",Result,",%esi\n",
+     "  movl (%esi),%eax\n",
+     "  dec %eax\n",
+     "  jnz ",zz  , "\n");
+}
+
 func AsmRepeat() {
   Wr("  lea "); Wr(Result); Wr(",%rsi\n");
   Wr("  mov (%rsi),%rax\n");
@@ -240,6 +262,15 @@ func RustRepeat() {
 
 /********************************************************/
 
+func Asm32Then() {
+  var cur = Nev - 1
+  Wr("  lea "); Wr(Result); Wr(",%eax\n");
+  Wr("  neg %eax\n");
+  Wr("  jnc "); Wr(" else"); Wr( fmt.Sprintf("%d",Evals[cur]) ); Wr("\n");
+  Thens[cur] = true;
+  Elses[cur] = false;
+}
+
 func AsmThen() {
   var cur = Nev - 1
   Wr("  lea "); Wr(Result); Wr("(%rip),%rax\n");
@@ -249,25 +280,29 @@ func AsmThen() {
   Elses[cur] = false;
 }
 
-func GoThen() {
+func GoThen() bool {
   To(GetIdent());
   Wr("if ");  Wr(Result); Wr(" == 1 {\n");
   SetIdent(GetIdent() + 2);
+  return true;
 }
 
-func RustThen() { GoThen(); }
+func RustThen() bool { return GoThen(); }
 
-func PythonThen() {
+func PythonThen() bool {
   To(GetIdent());
   Wr("if  "); Wr(Result); Wr(" == 1:\n");
   SetIdent(GetIdent() + 2); 
+  return true;
 }
 
-func MojoThen() { PythonThen(); }
+func MojoThen() bool { return PythonThen(); }
 
 /********************************************************/
 
-func AsmDone() {
+func Asm32Done() bool { return AsmDone(); }
+
+func AsmDone() bool {
    var cur = Nev - 1;
    Wr("\n");
    if !Elses[cur]  {
@@ -275,24 +310,30 @@ func AsmDone() {
    };
    Wr("done"); Wr(fmt.Sprintf("%d",Evals[Nev -1]) ); Wr(": nop\n"); 
    Nev -= 1;
+  return true;
 }
 
-func AsmLoop() {
+func Asm32Loop() bool{ return AsmLoop(); }
+
+func AsmLoop() bool {
   var z = fmt.Sprintf("%d",Evals[Nev-1]);
   Wr("\n","# loop ev",z,"\n");
   Wr("  jmp ev"); Wr(z); Wr("\n"); 
   Wr("leave_"); Wr(z); Wr(": nop\n");
   Nev -= 1;
-
+  return true;
 }
 
-func AsmElse() { 
+func Asm32Else() bool { return AsmElse(); }
+
+func AsmElse()  bool { 
   var cur = Nev - 1
   var lb = Evals[cur];
   Elses[cur] = true;
   var z = fmt.Sprintf("%d",lb);
   Wr("\n  jmp done"); Wr(z); Wr("\n"); 
   Wr("else"); Wr(z); Wr(": nop\n");
+  return true;
 }
 
 func GoElse() {
@@ -352,9 +393,10 @@ func FromCalc(varName string, iStart int,nv int, p *Seq) int {
     };
   }; // for
   if varName != "?" { 
+    if Mode == ASM { Asm32Ass(varName,St[0]); return 0; };
     if Mode == ASM { AsmAss(varName,St[0]); return 0;  };
     To(GetIdent());
-    Wr(varName); Wr(" = "); Wr( St[0] ); 
+    Wr(varName," = ", St[0] ); 
     eoi();
   };
   DbgTrace(")FromCalc");

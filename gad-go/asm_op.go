@@ -5,11 +5,13 @@ package main
 import "fmt"
 import "strings"
 
+
 func asmOp1(xop string) {
   if xop == " + 1" {
     Wr("  inc %rbx\n"); 
   };
 }
+
 
 func AsmOp1(xop string,xn string) {
   if strings.Contains("0123456789",xn[0:0]) {
@@ -17,9 +19,9 @@ func AsmOp1(xop string,xn string) {
     Wr("  movq "); Wr(buf); Wr(",%rbx\n"); 
   } else {
      Wr("  lea ");
-     if strings.HasPrefix(xn,"gad_") { Wr(CurProc); Wr("."); }
-     Wr(xn); Wr("(%rip),%rdi\n"); 
-     Wr("  mov (%rdi),%rbx\n");
+     if !strings.HasPrefix(xn,"gad_") { Wr(CurProc,"."); };
+     Wr(xn,",%rdi\n",
+        "  movq (%rdi),%rbx\n");
   };
   asmOp1(xop);
   Wr("  mov %rbx,(%rdi)\n");
@@ -51,41 +53,41 @@ func AsmOp2(xop string, xto string, xfrom string) {
      };
      return;
   };
-  Wr("# asmOp2 "); Wr(xop); Wr(" "); Wr(xfrom); Wr(","); Wr(xto); Wr("\n");
+  Wr("# asmOp2 ",xop," ", xfrom, ",", xto, "\n");
   var from = ""; var to = "";
   dt = TypeOfLiteral(xfrom);
   if dt == DTYPE_NUM {
     from = fmt.Sprintf("$%s",xfrom);
-    Wr("  movq "); Wr(from); Wr(",%rsi\n"); 
+    Wr("  movq ", from, ",%rsi\n"); 
   } else {
     if !strings.HasPrefix(xfrom,"gad_") { from = fmt.Sprintf("%s.%s",CurProc,xfrom); 
     } else { from = xfrom; }
-    Wr("  lea "); Wr(from); Wr("(%rip),%rsi\n"); Wr("  movq (%rsi),%rsi\n");
+    Wr("  lea ", from, ",%rsi\n","  movq (%rsi),%rsi\n");
   };
   //
   dt = TypeOfLiteral(xto);
   if(dt == DTYPE_NUM) {
     to = fmt.Sprintf("$%s",xto);
-    Wr("  movq "); Wr(to); Wr(",%rdi\n"); 
+    Wr("  movq ", to, ",%rdi\n"); 
   } else {
     if !strings.HasPrefix(xto,"gad_") { to = fmt.Sprintf("%s.%s",CurProc,xto); 
     } else { to = xto; };
-    Wr("  lea "); Wr(to); Wr("(%rip),%rdi\n"); Wr("  movq (%rdi),%rdi\n");
+    Wr("  lea ", to, ",%rdi\n", "  movq (%rdi),%rdi\n");
   };
   //
   switch xop {
-  case " + ": { Wr("  add %rsi,%rdi\n"); }
-  case " - ": { Wr("  sub %rsi,%rdi\n"); }
-  case " * ": { Wr("  imul %rsi,%rdi\n"); }
-  case " / ": { Wr("  idiv %rsi,%rdi\n"); } 
-  case " == ": { AsmSetBit("  sete %al\n"); }
-  case " < ": { AsmSetBit("  setb %al\n"); }
-  case " <= ": { AsmSetBit("  setbe %al\n"); }
-  case " > ": { AsmSetBit("  seta %al\n"); }
-  case " >= ": { AsmSetBit("  setae %al\n"); }
-  case " != ": { AsmSetBit("  setne %al\n"); }
+  case " + ": Wr("  add %rsi,%rdi\n"); 
+  case " - ": Wr("  sub %rsi,%rdi\n"); 
+  case " * ": Wr("  imul %rsi,%rdi\n"); 
+  case " / ": Wr("  idiv %rsi,%rdi\n"); 
+  case " == ": AsmSetBit("  sete %al\n");
+  case " < ": AsmSetBit("  setb %al\n");
+  case " <= ": AsmSetBit("  setbe %al\n");
+  case " > ": AsmSetBit("  seta %al\n");
+  case " >= ": AsmSetBit("  setae %al\n"); 
+  case " != ": AsmSetBit("  setne %al\n"); 
   };
   //
-  Wr("  lea "); Wr(Result); Wr("(%rip),%rsi\n"); Wr("  movq %rdi,(%rsi)\n");
+  Wr("  lea ", Result, "(%rip),%rsi\n", "  movq %rdi,(%rsi)\n");
 }
 

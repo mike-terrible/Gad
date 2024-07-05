@@ -22,9 +22,15 @@ func GoLoop() {
 
 func GenLoop() {
   DbgTrace("GenLoop");
-  if Mode == ASM { 
+  switch Mode {
+  case ASM32: {
+    if Nev > 0 { Asm32Loop(); }; 
+    return;
+  }
+  case ASM: { 
     if Nev > 0 { AsmLoop(); }; 
     return; 
+  };
   };
   SetIdent(GetIdent() - 2); To(GetIdent());
   switch Mode {
@@ -35,9 +41,18 @@ func GenLoop() {
   };
 }
 
-func GenDone() { 
-  if Mode == ASM { AsmDone(); return; }
+func GenDone() {
+  switch Mode { 
+  case ASM32: { Asm32Done(); return; } 
+  case ASM: { AsmDone(); return; }
+  };
   GenLoop(); 
+}
+
+func Asm32Amen() {
+  InProc = false;
+  Wr("# amen ",CurProc,"\n");
+  Wr("  pop %eax\n","  ret\n");
 }
 
 func AsmAmen() {
@@ -47,10 +62,10 @@ func AsmAmen() {
 }
 
 func GenAmen() {
-  if Mode == ASM { 
-    AsmAmen(); 
-    return; 
-  }
+  switch Mode {
+  case ASM32: { Asm32Amen(); return; }
+  case ASM: { AsmAmen(); return;  }
+  };
   InProc = false; 
   To(GetIdent() - 2);
   switch Mode {

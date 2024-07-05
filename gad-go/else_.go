@@ -4,6 +4,7 @@
 package main
 
 func GenElse()  {
+  if Mode == ASM32 { Asm32Else(); return; };
   if Mode == ASM { AsmElse(); return; };
   SetIdent( GetIdent() - 2 );
   switch Mode {

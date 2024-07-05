@@ -2,4 +2,4 @@
 // ver.go
 package main
 
-var Ver string = "2.05"
+var Ver string = "2.06"

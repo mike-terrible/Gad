@@ -41,15 +41,17 @@ func Parser(fn string, mode string) {
   case RUST: zname = strings.ReplaceAll(zname,".out",".rs"); 
   case PYTHON: zname =strings.ReplaceAll(zname,".out",".py");
   case ASM: zname =strings.ReplaceAll(zname,".out",".s"); 
+  case ASM32: zname =strings.ReplaceAll(zname,".out","-32.s");
   };
   fmt.Println("output: ",zname);
   fmt.Println("mode: ",Mode)
   out,err := os.Create(zname)
   Out = bufio.NewWriter(out)
   //
-  if Mode == ASM {
+  switch Mode { 
+  case ASM,ASM32: {
     Wr("  .text\n"); Wr("  .global main\n");
-  };
+  }};
   if Mode == GO {
     Wr("package main\n");
     SetIdent(2);
@@ -71,11 +73,7 @@ func Parser(fn string, mode string) {
     case Cmp(s,LOOP): GenLoop();
     case Cmp(s,DONE): GenDone(); 
     case Cmp(s,RETURN): GenReturn(nv,&pt);
-    case Cmp(s,WHEN): {
-      Wr("\n");
-      DbgTrace("<WHEN>");
-      GenEval(nv,&pt);
-    }
+    case Cmp(s,WHEN): GenEval(nv,&pt);
     case Cmp(s,SIC): GenSic(nv,&pt);  
     case Cmp(s,ELSE): GenElse();
     case Cmp(s,IF): GenEval(nv,&pt);
@@ -129,19 +127,36 @@ func Parser(fn string, mode string) {
     }};
   };
   if Mode == PYTHON { Wr("main()\n"); };
+  if Mode == ASM32 {
+    Wr("gad.nl: mov %esp,%ebp\n",
+       "  lea gad.nlcnv,%edi\n",
+       "  push %edi\n",
+       "  call printf\n",
+       "  mov %ebp,%esp\n",
+       "  ret\n");
+     var z = Ab.String();
+     Wr(" .data\n",
+       strings.ReplaceAll(z,"\n\n","\n"), 
+       "gad.nlcnv: .byte 10,0\n",
+       " .section .note.GNU-stack,\"\",@progbits\n", 
+       " .end\n");
+     VarDump();
+  };
   if Mode == ASM {
-    Wr("gad.nl: xor %rax,%rax\n",
+    if NeedNL {
+       Wr("gad.nl: xor %rax,%rax\n",
        " lea gad.nlcnv(%rip),%rdi\n",
        " call puts\n",
        " ret\n");
-    var z = Ab.String();
-    Wr(" .data\n",
+     };
+     var z = Ab.String();
+     Wr(" .data\n",
        strings.ReplaceAll(z,"\n\n","\n"), 
        "gad.nlcnv: .byte 0,0,0,0,0,0,0,0\n",
        " .section .note.GNU-stack,\"\",@progbits\n", 
        " .end\n");
-    VarDump();
-  }
+     VarDump();
+  };
   rf.Close()
   Out.Flush()
   out.Close()
