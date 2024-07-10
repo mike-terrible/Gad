@@ -23,13 +23,18 @@ var Result string = "";
 func Pri(op string) int {
   switch op {
   case "<","lt",">","gt","<=","le",">=","ge","!=","ne","==","eq": return 4;
-  case "*","mul", "div","%","mod": return 3;
+  case "*","mul", "/","div","%","mod": return 3;
   case "+","add","-","sub": return 2;
   case "<-","to", "->" : return 1;
   };
   return 0;
 }
 
+func Asm32AllocResult() {
+  Result = fmt.Sprintf("gad_%d",Zj);
+  Da(Result); Da(":\n"); Da("  .long 0,0\n");
+  Zj += 1;
+}
 
 func AsmAllocResult() {
   Result = fmt.Sprintf("gad_%d",Zj);
@@ -97,7 +102,7 @@ func goOp2(xop string,nt int) int {
     var top = nt;
     var /*xn2*/ xn1 = "$0";  if (nt - 1) >= 0 { /*xn2*/ xn1 = St[nt - 1]; top = nt - 1; };
     var /*xn1*/ xn2 = "$0";  if (nt - 2) >= 0 { /*xn1*/ xn2 = St[nt - 2]; top = nt - 2; };
-    AsmAllocResult(); 
+    Asm32AllocResult(); 
     St[top] = Result; top += 1; 
     Asm32Op2(xop,xn2,xn1); 
     return top;
@@ -233,20 +238,6 @@ func FromEvil(varName string, iStart int, nv int, p *Seq) {
 
 /********************************************************/
 
-func Asm32Repeat() {
-  var zz = fmt.Sprintf("leave_%d\n",Evals[Nev - 1])
-  Wr("  lea ",Result,",%esi\n",
-     "  movl (%esi),%eax\n",
-     "  dec %eax\n",
-     "  jnz ",zz  , "\n");
-}
-
-func AsmRepeat() {
-  Wr("  lea "); Wr(Result); Wr(",%rsi\n");
-  Wr("  mov (%rsi),%rax\n");
-  Wr("  dec %rax\n");
-  Wr("  jnz "); Wr(fmt.Sprintf("leave_%d\n",Evals[Nev - 1])); Wr("\n");
-}
 
 func GoRepeat() {
   To(GetIdent());
@@ -262,23 +253,6 @@ func RustRepeat() {
 
 /********************************************************/
 
-func Asm32Then() {
-  var cur = Nev - 1
-  Wr("  lea "); Wr(Result); Wr(",%eax\n");
-  Wr("  neg %eax\n");
-  Wr("  jnc "); Wr(" else"); Wr( fmt.Sprintf("%d",Evals[cur]) ); Wr("\n");
-  Thens[cur] = true;
-  Elses[cur] = false;
-}
-
-func AsmThen() {
-  var cur = Nev - 1
-  Wr("  lea "); Wr(Result); Wr("(%rip),%rax\n");
-  Wr("  neg %rax\n");
-  Wr("  jnc "); Wr(" else"); Wr( fmt.Sprintf("%d",Evals[cur]) ); Wr("\n");
-  Thens[cur] = true;
-  Elses[cur] = false;
-}
 
 func GoThen() bool {
   To(GetIdent());
@@ -343,11 +317,12 @@ func GoElse() {
 
 func GenRepeat() {
   switch Mode {
-  case ASM: { AsmRepeat(); }
-  case GO: { GoRepeat();  }
-  case RUST: { RustRepeat(); }
-  case PYTHON: { PyRepeat(); }
-  case MOJO: { MojoRepeat(); }
+  case ASM32: Asm32Repeat(); 
+  case ASM: AsmRepeat(); 
+  case GO: GoRepeat(); 
+  case RUST: RustRepeat();
+  case PYTHON: PyRepeat(); 
+  case MOJO: MojoRepeat(); 
   }
 }
 
@@ -393,7 +368,7 @@ func FromCalc(varName string, iStart int,nv int, p *Seq) int {
     };
   }; // for
   if varName != "?" { 
-    if Mode == ASM { Asm32Ass(varName,St[0]); return 0; };
+    if Mode == ASM32 { Asm32Ass(varName,St[0]); return 0; };
     if Mode == ASM { AsmAss(varName,St[0]); return 0;  };
     To(GetIdent());
     Wr(varName," = ", St[0] ); 

@@ -134,6 +134,8 @@ func Parser(fn string, mode string) {
        "  call printf\n",
        "  mov %ebp,%esp\n",
        "  ret\n");
+     //Da("gad_true:  .byte 0,0,0,0,0,0,0,1\n");
+     //Da("gad_false: .byte 0,0,0,0,0,0,0,0\n");
      var z = Ab.String();
      Wr(" .data\n",
        strings.ReplaceAll(z,"\n\n","\n"), 

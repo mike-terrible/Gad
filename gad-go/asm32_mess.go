@@ -37,7 +37,7 @@ func Asm32Show(t string) {
     b = Lit(lt); 
     Da(b); Da(".cnv:\n"); Da("  .asciz \""); Da("%ld"); Da("\"\n");
     Wr("  lea ", b, ",%edi\n",
-       "  movq $", t, ",%esi\n",
+       "  mov; $", t, ",%esi\n",
        "  sub %eax,%eax\n",
        "  mov %esp,%ebp\n",
        "  pushl %esi\n",
@@ -100,6 +100,7 @@ func Asm32Show(t string) {
 
 func Asm32Mess(t string) {
   Wr("\n","# asm32Mess ",t); 
+  if strings.HasPrefix(t,"\"") { Wr("\""); }
   Asm32Show(t);
   Wr("\n"," call gad.nl\n");
 }

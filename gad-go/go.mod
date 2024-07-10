@@ -1,3 +1,3 @@
-module gad.bin
+module go.gad
 
 go 1.19
