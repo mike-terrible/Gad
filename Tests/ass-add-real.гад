@@ -1,0 +1,11 @@
+(*
+  ass-add-rel.гад
+*)
+
+run hi go
+  dcl a as real be 1.1
+  dcl b as real be 2.4
+  dcl c as real be 0.0
+  evil ( c = a + b )
+  mess c
+amen

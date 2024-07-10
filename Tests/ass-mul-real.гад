@@ -1,0 +1,11 @@
+(*
+  ass-mul-real.гад
+*)
+
+run hi go
+  dcl a as real be 0.5
+  dcl b as real be 6.4
+  dcl c as real be 0.0
+  evil ( c = b * a )
+  show with "b = 6.4 a = 0.5 c = b * a ? " with c with "\n"
+amen

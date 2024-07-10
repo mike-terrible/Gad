@@ -1,0 +1,11 @@
+(*
+  ass-add-num.гад
+*)
+
+run hi go
+  dcl a as num be 1
+  dcl b as num be 2
+  dcl c as num be 0
+  evil ( c = a + b )
+  mess c
+amen

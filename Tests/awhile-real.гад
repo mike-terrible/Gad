@@ -1,0 +1,13 @@
+(*
+  ass-while.гад
+*)
+run hi as
+  dcl a as real be 0.0
+  dcl fin as real be 41.4
+  when ( a < fin ) repeat 
+    evil a 15.6 a + to
+    mess a
+  loop 
+  mess "\ndone\n"
+amen
+

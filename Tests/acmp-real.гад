@@ -1,0 +1,18 @@
+(*
+  acmp-real.гад 
+*)
+run hi as
+  dcl c as num
+  dcl b as real
+  dcl a as real
+  evil ( a to 4.4 )
+  evil ( b to 3.3 )
+  evil ( c to ( b < a ) )
+  mess "b = "
+  mess b
+  mess "a = "
+  mess a
+  mess "c = ( b < a )"
+  mess c
+  mess "\n"
+amen
